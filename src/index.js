@@ -195,7 +195,7 @@ const findEpisode = async (payload) => {
       headers: {
         'Content-Type': 'application/json',
         'trakt-api-version': '2',
-        // 'trakt-api-key': process.env.TRAKT_ID,
+        'trakt-api-key': process.env.TRAKT_ID,
       },
     });
 
