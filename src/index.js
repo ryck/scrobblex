@@ -23,6 +23,7 @@ if (process.env.NODE_ENV !== 'production') {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+app.use('/favicon.ico', express.static('favicon.ico'));
 
 app.set('view engine', 'ejs');
 
@@ -193,7 +194,7 @@ app.post('/api', upload.single('thumb'), async (req, res) => {
   const tokenAge = differenceInHours(new Date(), new Date(fromUnixTime(created_at)));
   if (tokenAge > 1440) {
     // tokens expire after 3 months, so we refresh after 2
-    log(`\n🔐 User access token outdated, refreshing...`);
+    log(`\n🔐 Token expired, refreshing...`);
     const redirect_uri = `${req.protocol}://${req.get('host')}/authorize`;
 
     const tokens = await authRequest({ grant_type: 'refresh_token', redirect_uri, refresh_token });
@@ -251,7 +252,7 @@ const authRequest = async ({ code, redirect_uri, refresh_token, grant_type }) =>
     const tokens = response.data;
     return tokens;
   } catch (err) {
-    return res.status(401).send(err.message);
+    log(`❌ ${chalk.red(`Auth API error: ${err.message}`)}`);
   }
 };
 
@@ -272,8 +273,20 @@ app.get('/authorize', async (req, res) => {
 
 try {
   app.listen(PORT, () => {
-    console.log(`🏁 Connected successfully on http://localhost:${PORT}`);
+    console.log(`✅ Connected successfully on http://localhost:${PORT}`);
   });
 } catch (error) {
   console.error(`Error occurred: ${error.message}`);
 }
+
+// const onCloseSignal = () => {
+//   log(`💣 sigint received, shutting down`);
+//   app.close(() => {
+//     log('💀 server closed');
+//     process.exit();
+//   });
+//   setTimeout(() => process.exit(1), 10000).unref(); // Force shutdown after 10s
+// };
+
+// process.on('SIGINT', onCloseSignal);
+// process.on('SIGTERM', onCloseSignal);
