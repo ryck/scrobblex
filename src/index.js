@@ -5,7 +5,6 @@ import multer from 'multer';
 import { fromUnixTime, differenceInHours } from 'date-fns';
 import chalk from 'chalk';
 import { LocalStorage } from 'node-localstorage';
-
 import { logger } from './logger.js';
 import { handle } from './utils.js';
 import { authorizeRequest } from './requests.js';
@@ -18,9 +17,15 @@ import 'dotenv/config';
 
 const localStorage = new LocalStorage('./data');
 
-if (process.env.NODE_ENV !== 'production') {
-  app.use(morgan('dev'));
-}
+app.use(
+  morgan('dev', {
+    stream: {
+      write: function (message) {
+        logger.debug(message);
+      },
+    },
+  }),
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
