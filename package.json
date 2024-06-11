@@ -1,10 +1,18 @@
 {
   "name": "scrobblex",
-  "description": "Self-hosted webhook that enables Plex scrobbling integration with Trakt",
+  "description": "Self-hosted app that enables Plex scrobbling integration with Trakt via webhooks",
   "version": "0.1.0",
-  "main": "index.js",
+  "main": "src/index.js",
   "type": "module",
   "license": "MIT",
+  "author": "Ricardo Gonzalez <ryck@ryck.me>",
+  "keywords": [
+    "plex",
+    "trakt",
+    "webhook",
+    "scrobbler",
+    "express"
+  ],
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",

@@ -3,16 +3,17 @@ version: '3.9'
 services:
   scrobblex:
     container_name: scrobblex
-    image: scrobblex
+    image: rickgc/scrobblex
     restart: always
     build:
       context: .
       dockerfile: Dockerfile
       target: base
     ports:
-      - $PORT:$PORT
+      - 3091:$PORT
     environment:
       - TRAKT_ID=$TRAKT_ID
       - TRAKT_SECRET=$TRAKT_SECRET
+      - LOG_LEVEL=$LOG_LEVEL
     volumes:
       - ./scrobblex:/data

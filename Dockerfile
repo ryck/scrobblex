@@ -16,11 +16,11 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
-RUN npm ci --production
+RUN npm ci
 
 COPY . .
 
-# VOLUME /usr/src/app/data
+VOLUME /usr/src/app/data
 
 EXPOSE 3090
 
