@@ -27,40 +27,45 @@ app.use('/favicon.ico', express.static('favicon.ico'));
 
 app.set('view engine', 'ejs');
 
-const getAction = (action) => {
+const getAction = ({ event, viewOffset = 99.9, duration }) => {
+  const progress = Number.parseFloat((viewOffset / duration) * 100).toFixed(2);
   let res = {
     action: 'start', // start, pause, stop
-    progress: 0, //0, 90
+    progress: progress, //0, 90
   };
-  switch (action) {
+  switch (event) {
     case 'media.play':
       res.action = 'start';
-      res.progress = 0;
+      res.progress = progress;
       break;
     case 'media.pause':
       res.action = 'pause';
-      res.progress = 0;
+      res.progress = progress;
       break;
     case 'media.resume':
       res.action = 'start';
-      res.progress = 0;
+      res.progress = progress;
       break;
     case 'media.stop':
       res.action = 'stop';
       res.progress = 0;
       break;
     case 'media.scrobble':
-      res.action = 'scrobble';
-      res.progress = 90;
+      res.action = 'stop';
+      res.progress = progress;
       break;
   }
-
   return res;
 };
 
 // Handle determine if an item is a show or a movie
 const handle = ({ payload, access_token }) => {
+  const events = ['media.play', 'media.pause', 'media.resume', 'media.stop', 'media.scrobble'];
   const { librarySectionType } = payload.Metadata;
+  if (!events.includes(payload.event)) {
+    log(`❌ ${chalk.red(`Event ${payload.event} is not supported`)}`);
+    return;
+  }
   if (librarySectionType == 'show') {
     handleShow({ payload, access_token });
   } else if (librarySectionType == 'movie') {
@@ -85,7 +90,9 @@ const scrobbleRequest = async ({ action, body, access_token, title }) => {
 };
 
 const handleMovie = async ({ payload, access_token }) => {
-  const { action, progress } = getAction(payload.event);
+  const { event } = payload;
+  const { viewOffset, duration } = payload.Metadata;
+  const { action, progress } = getAction({ event, viewOffset, duration });
   const movie = await findMovie(payload);
   if (!movie) {
     log(`❌ ${chalk.red(`Couldn't find movie info`)}`);
@@ -100,7 +107,9 @@ const handleMovie = async ({ payload, access_token }) => {
   scrobbleRequest({ action, body, access_token, title });
 };
 const handleShow = async ({ payload, access_token }) => {
-  const { action, progress } = getAction(payload.event);
+  const { event } = payload;
+  const { viewOffset, duration } = payload.Metadata;
+  const { action, progress } = getAction({ event, viewOffset, duration });
   const episode = await findEpisode(payload);
 
   if (!episode) {
@@ -119,12 +128,12 @@ const handleShow = async ({ payload, access_token }) => {
 const findMovie = async (payload) => {
   const Guid = payload.Metadata.Guid;
   const service = Guid[0].id.substring(0, 4);
-  const episodeID = Guid[0].id.substring(7);
+  const id = Guid[0].id.substring(7);
 
-  log(`🔍 Finding movie for ${payload.Metadata.title} (${payload.Metadata.year}) using ${service}`);
+  log(`\n🔍 Finding movie for ${payload.Metadata.title} (${payload.Metadata.year}) using ${service}://${id}`);
 
   try {
-    const response = await axios.get(`https://api.trakt.tv/search/${service}/${episodeID}?type=movie`, {
+    const response = await axios.get(`https://api.trakt.tv/search/${service}/${id}?type=movie`, {
       headers: {
         'Content-Type': 'application/json',
         'trakt-api-version': '2',
@@ -137,20 +146,20 @@ const findMovie = async (payload) => {
     return movie;
   } catch (err) {
     // Error handling here
-    log(`❌ ${chalk.red(`Search movie API error: ${err.message}`)}`);
+    log(`\n❌ ${chalk.red(`Search movie API error: ${err.message}`)}`);
   }
 };
 
 const findEpisode = async (payload) => {
   const Guid = payload.Metadata.Guid;
   const service = Guid[0].id.substring(0, 4);
-  const episodeID = Guid[0].id.substring(7);
+  const id = Guid[0].id.substring(7);
   log(
-    `🔍 Finding show for ${payload.Metadata.grandparentTitle} (${payload.Metadata.year}) - ${payload.Metadata.parentTitle} - ${payload.Metadata.title} using ${service}`,
+    `\n🔍 Finding show for ${payload.Metadata.grandparentTitle} (${payload.Metadata.year}) - ${payload.Metadata.parentTitle} - ${payload.Metadata.title} using ${service}://${id}`,
   );
 
   try {
-    const response = await axios.get(`https://api.trakt.tv/search/${service}/${episodeID}?type=episode`, {
+    const response = await axios.get(`https://api.trakt.tv/search/${service}/${id}?type=episode`, {
       headers: {
         'Content-Type': 'application/json',
         'trakt-api-version': '2',
@@ -162,7 +171,7 @@ const findEpisode = async (payload) => {
 
     return episode;
   } catch (err) {
-    log(`❌ ${chalk.red(`Search episode API error: ${err.message}`)}`);
+    log(`\n❌ ${chalk.red(`Search episode API error: ${err.message}`)}`);
   }
 };
 
@@ -172,13 +181,13 @@ app.post('/api', upload.single('thumb'), async (req, res) => {
   const type = payload.Metadata.type;
   const title = payload.Metadata.title;
 
-  log(`\n❗️ ${event} 🏷️ ${type} 🔖 ${title}\n`);
+  log(`\n❗️ Event: ${event} 🏷️ Type: ${type} 🔖 Title: ${title}`);
 
   const tokens = localStorage.getItem('tokens');
 
-  if (!tokens) {
-    log(`❌ ${chalk.red(`Error reading the file.`)}`);
-    log(`ℹ️ Have you authorized the application? Go to ${req.protocol}://${req.get('host')} to do it if needed.`);
+  if (!tokens || tokens == 'undefined') {
+    log(`\n❌ ${chalk.red(`Error reading the file.`)}`);
+    log(`\nℹ️ Have you authorized the application? Go to ${req.protocol}://${req.get('host')} to do it if needed.`);
     return res.status(401);
   }
   let { access_token, refresh_token, created_at } = JSON.parse(tokens);
@@ -198,9 +207,15 @@ app.post('/api', upload.single('thumb'), async (req, res) => {
     const redirect_uri = `${req.protocol}://${req.get('host')}/authorize`;
 
     const tokens = await authRequest({ grant_type: 'refresh_token', redirect_uri, refresh_token });
-    const data = JSON.stringify(tokens);
-    localStorage.setItem('tokens', data);
-    access_token = tokens.access_token;
+
+    if (tokens) {
+      const data = JSON.stringify(tokens);
+      localStorage.setItem('tokens', data);
+      access_token = tokens.access_token;
+    } else {
+      log(`\n❌ ${chalk.red(`No tokens found!`)}`);
+      return res.status(401);
+    }
   }
 
   handle({ payload, access_token });
@@ -230,7 +245,7 @@ app.get('/', async (req, res) => {
 });
 
 const authRequest = async ({ code, redirect_uri, refresh_token, grant_type }) => {
-  log(`🔑 Getting token`);
+  log(`\n🔑 Getting token`);
   const client_id = process.env.TRAKT_ID;
   const client_secret = process.env.TRAKT_SECRET;
 
@@ -252,7 +267,7 @@ const authRequest = async ({ code, redirect_uri, refresh_token, grant_type }) =>
     const tokens = response.data;
     return tokens;
   } catch (err) {
-    log(`❌ ${chalk.red(`Auth API error: ${err.message}`)}`);
+    log(`\n❌ ${chalk.red(`Auth API error: ${err.message}`)}`);
   }
 };
 
@@ -260,8 +275,13 @@ app.get('/authorize', async (req, res) => {
   const code = req.query.code;
   const redirect_uri = `${req.protocol}://${req.get('host')}/authorize`;
   const tokens = await authRequest({ code, grant_type: 'authorization_code', redirect_uri });
-  const data = JSON.stringify(tokens);
-  localStorage.setItem('tokens', data);
+  if (tokens) {
+    const data = JSON.stringify(tokens);
+    localStorage.setItem('tokens', data);
+  } else {
+    log(`\n❌ ${chalk.red(`No tokens found!`)}`);
+    return;
+  }
 
   res.render('pages/index', {
     self_url: `${req.protocol}://${req.get('host')}`,
@@ -273,7 +293,7 @@ app.get('/authorize', async (req, res) => {
 
 try {
   app.listen(PORT, () => {
-    console.log(`✅ Connected successfully on http://localhost:${PORT}`);
+    console.log(`\n✅ Connected successfully on http://localhost:${PORT}`);
   });
 } catch (error) {
   console.error(`Error occurred: ${error.message}`);
