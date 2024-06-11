@@ -35,7 +35,7 @@ app.post('/api', upload.single('thumb'), async (req, res) => {
   const type = payload.Metadata.type;
   const title = payload.Metadata.title;
 
-  logger.debug(JSON.stringify(payload));
+  logger.debug(JSON.stringify(payload, null, 2));
   logger.info(`❗️ Event: ${event} 🏷️ Type: ${type} 🔖 Title: ${title}`);
 
   const tokens = localStorage.getItem('tokens');

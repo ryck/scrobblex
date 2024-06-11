@@ -36,6 +36,7 @@ export const findMovieRequest = async (payload) => {
     });
 
     const movie = response.data[0].movie;
+    logger.debug(movie);
     const { title, year, ids } = movie;
     logger.info(`🎬 Movie found: ${title} (${year}) - IDs: ${JSON.stringify(ids)}`);
 
@@ -64,6 +65,7 @@ export const findEpisodeRequest = async (payload) => {
     });
 
     const episode = response.data[0].episode;
+    logger.debug(episode);
     const { season, number, title, ids } = episode;
     logger.info(
       `📺 Episode found: S${season.toString().padStart(2, '0')}E${number
@@ -97,6 +99,7 @@ export const authorizeRequest = async ({ code, redirect_uri, refresh_token, gran
       },
     });
     const tokens = response.data;
+    logger.debug(tokens);
     return tokens;
   } catch (err) {
     logger.error(`❌ ${chalk.red(`Auth API error: ${err.message}`)}`);
