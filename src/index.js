@@ -83,7 +83,7 @@ const scrobbleRequest = async ({ action, body, access_token, title }) => {
         'trakt-api-version': '2',
       },
     });
-    log(`\n🎯 Scrobbling ${title} (${action})`);
+    log(`\n📡 Scrobbling ${title} (${action})`);
   } catch (err) {
     log(`❌ ${chalk.red(`Scrobble API error: ${err.message}`)}`);
   }
@@ -142,6 +142,8 @@ const findMovie = async (payload) => {
     });
 
     const movie = response.data[0].movie;
+    const { title, year, ids } = movie;
+    log(`\n🎬 Movie found: ${title} (${year}) - IDs: ${JSON.stringify(ids)}`);
 
     return movie;
   } catch (err) {
@@ -168,7 +170,12 @@ const findEpisode = async (payload) => {
     });
 
     const episode = response.data[0].episode;
-
+    const { season, number, title, ids } = episode;
+    log(
+      `\n📺 Episode found: S${season.toString().padStart(2, '0')}E${number
+        .toString()
+        .padStart(2, '0')} - ${title} - IDs: ${JSON.stringify(ids)}`,
+    );
     return episode;
   } catch (err) {
     log(`\n❌ ${chalk.red(`Search episode API error: ${err.message}`)}`);
