@@ -298,22 +298,10 @@ app.get('/authorize', async (req, res) => {
   });
 });
 
-try {
-  app.listen(PORT, () => {
+app.listen(PORT, (error) => {
+  if (!error) {
     console.log(`\n✅ Connected successfully on http://localhost:${PORT}`);
-  });
-} catch (error) {
-  console.error(`Error occurred: ${error.message}`);
-}
-
-// const onCloseSignal = () => {
-//   log(`💣 sigint received, shutting down`);
-//   app.close(() => {
-//     log('💀 server closed');
-//     process.exit();
-//   });
-//   setTimeout(() => process.exit(1), 10000).unref(); // Force shutdown after 10s
-// };
-
-// process.on('SIGINT', onCloseSignal);
-// process.on('SIGTERM', onCloseSignal);
+  } else {
+    console.error(`\n❌ ${chalk.red(`Error occurred: ${error.message}`)}`);
+  }
+});
