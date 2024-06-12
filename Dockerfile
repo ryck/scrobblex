@@ -1,8 +1,7 @@
-FROM node:alpine as base
+FROM node:lts-alpine as base
 
 # File Author / Maintainer
 LABEL authors="Ricardo Gonzalez <ryck@ryck.me>"
-
 
 ENV NODE_ENV=production
 ENV NODE_ENV $NODE_ENV
