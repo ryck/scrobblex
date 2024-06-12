@@ -1,19 +1,13 @@
-version: '3.9'
-
 services:
   scrobblex:
+    image: ghcr.io/ryck/scrobblex:latest
     container_name: scrobblex
-    image: rickgc/scrobblex
     restart: always
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: base
     ports:
-      - 3091:$PORT
+      - $PORT:$PORT
     environment:
       - TRAKT_ID=$TRAKT_ID
       - TRAKT_SECRET=$TRAKT_SECRET
       - LOG_LEVEL=$LOG_LEVEL
     volumes:
-      - ./scrobblex:/data
+      - ./scrobblex:/app/data
