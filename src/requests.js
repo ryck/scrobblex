@@ -37,8 +37,8 @@ export const findMovieRequest = async (payload) => {
 
     const movie = response.data[0].movie;
     logger.debug(movie);
-    const { title, year, ids } = movie;
-    logger.info(`🎬 Movie found: ${title} (${year}) - IDs: ${JSON.stringify(ids)}`);
+    const { title, year } = movie;
+    logger.info(`🎬 Movie found: ${title} (${year})`);
 
     return movie;
   } catch (err) {
@@ -66,11 +66,9 @@ export const findEpisodeRequest = async (payload) => {
 
     const episode = response.data[0].episode;
     logger.debug(episode);
-    const { season, number, title, ids } = episode;
+    const { season, number, title } = episode;
     logger.info(
-      `📺 Episode found: S${season.toString().padStart(2, '0')}E${number
-        .toString()
-        .padStart(2, '0')} - ${title} - IDs: ${JSON.stringify(ids)}`,
+      `📺 Episode found: S${season.toString().padStart(2, '0')}E${number.toString().padStart(2, '0')} - ${title}`,
     );
     return episode;
   } catch (err) {
