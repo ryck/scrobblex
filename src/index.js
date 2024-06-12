@@ -109,7 +109,7 @@ app.get('/', async (req, res) => {
 app.get('/authorize', async (req, res) => {
   const code = req.query.code;
   const redirect_uri = `${req.protocol}://${req.get('host')}/authorize`;
-  const tokens = await authRequest({ code, grant_type: 'authorization_code', redirect_uri });
+  const tokens = await authorizeRequest({ code, grant_type: 'authorization_code', redirect_uri });
   if (tokens) {
     const data = JSON.stringify(tokens);
     localStorage.setItem('tokens', data);
