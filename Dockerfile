@@ -8,8 +8,10 @@ LABEL org.opencontainers.image.licenses='MIT'
 
 ENV NODE_ENV=production
 ENV NODE_ENV $NODE_ENV
-ENV PORT 3090
+ENV PORT=3090
 ENV PORT $PORT
+ENV LOG_LEVEL=info
+ENV LOG_LEVEL $LOG_LEVEL
 
 
 HEALTHCHECK CMD curl --fail http://localhost:${PORT}/healthcheck || exit 1
