@@ -21,7 +21,7 @@ To run it yourself, first create an API application through Trakt [here](https:/
 
 Once Scrobblex is running, just go to http://$YOUR_IP:$PORT/ (ie: http://10.20.30.40:3090/) and a web page will guide you to get your token.
 
-### docker run
+### Using docker run
 
 ```bash
 docker run \
@@ -34,7 +34,7 @@ docker run \
   ryck/scrobblex:latest
 ```
 
-### docker-compose.yml
+### Using docker-compose.yml
 
 ```yaml
 services:
