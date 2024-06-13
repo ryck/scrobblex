@@ -31,7 +31,7 @@ docker run \
   -e TRAKT_ID=<trakt_id> \
   -e TRAKT_SECRET=<trakt_secret> \
   -p 3090:3090 \
-  ryck/scrobblex:latest
+  rickgc/scrobblex:latest
 ```
 
 ### Using docker-compose.yml
@@ -39,7 +39,7 @@ docker run \
 ```yaml
 services:
   scrobbled:
-    image: ghcr.io/ryck/scrobblex:latest
+    image: rickgc/scrobblex:latest
     container_name: scrobblex
     restart: always
     ports:
