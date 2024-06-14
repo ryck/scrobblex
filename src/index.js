@@ -131,7 +131,7 @@ app.get('/authorize', async (req, res) => {
 app.listen(PORT, (error) => {
   if (!error) {
     logger.info(`🤖 Scrobb${orange('lex')} v${process.env.npm_package_version}`);
-    logger.info(`⚡️ Connected successfully on http://localhost:${PORT}`);
+    logger.info(`🚀 Connected successfully on http://localhost:${PORT}`);
   } else {
     logger.error(`❌ ${chalk.red(`Error occurred: ${error.message}`)}`);
   }
