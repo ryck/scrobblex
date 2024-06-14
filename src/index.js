@@ -34,6 +34,8 @@ app.use('/favicon.ico', express.static('favicon.ico'));
 
 app.set('view engine', 'ejs');
 
+const orange = chalk.rgb(249, 115, 22);
+
 app.post('/api', upload.single('thumb'), async (req, res) => {
   const payload = JSON.parse(req.body.payload);
   const event = payload.event;
@@ -128,6 +130,7 @@ app.get('/authorize', async (req, res) => {
 
 app.listen(PORT, (error) => {
   if (!error) {
+    logger.info(`🤖 Scrobb${orange('lex')} v${process.env.npm_package_version}`);
     logger.info(`⚡️ Connected successfully on http://localhost:${PORT}`);
   } else {
     logger.error(`❌ ${chalk.red(`Error occurred: ${error.message}`)}`);
