@@ -65,5 +65,14 @@ npm run start
 | Variable     | Default   | Description                        |
 | ------------ | --------- | ---------------------------------- |
 | TRAKT_ID     | undefined | Trakt application ID               |
-| TRAKT_SECRET | undefined | trakt application secret           |
+| TRAKT_SECRET | undefined | Trakt application secret           |
+| PORT         | 3090      | Exposed express port               |
 | LOG_LEVEL    | info      | winston log level: ie: info, debug |
+
+## Thanks To...
+
+[XanderStrike](https://github.com/XanderStrike) for his [goplaxt](https://github.com/XanderStrike/goplaxt) project. Scrobblex is basically the same thing, but in NodeJS, so kudos to him!
+
+## License
+
+MIT
