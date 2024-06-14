@@ -26,4 +26,4 @@ COPY . .
 
 EXPOSE ${PORT}
 
-CMD ["node",  "src/index.js"]
+CMD ["npm", "start"]
