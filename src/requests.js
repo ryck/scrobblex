@@ -13,7 +13,7 @@ export const scrobbleRequest = async ({ action, body, access_token, title }) => 
         'trakt-api-version': '2',
       },
     });
-    logger.info(`📡 Scrobbling ${title} (${action}) at ${body.progress}%`);
+    logger.info(`📡 Scrobbling ${title} (${action})`);
   } catch (err) {
     logger.error(`❌ ${chalk.red(`Scrobble API error: ${err.message}`)}`);
   }
