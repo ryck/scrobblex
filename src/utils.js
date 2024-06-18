@@ -4,23 +4,22 @@ import { logger } from './logger.js';
 import { scrobbleRequest, findEpisodeRequest, findMovieRequest } from './requests.js';
 
 export const getAction = ({ event, viewOffset = 99.9, duration }) => {
-  const progress = Number.parseFloat((viewOffset / duration) * 100).toFixed(2);
   let res = {
     action: 'start', // start, pause, stop
-    progress: progress, //0, 90
+    progress: 0, //0, 90
   };
   switch (event) {
     case 'media.play':
       res.action = 'start';
-      res.progress = progress;
+      res.progress = 0;
       break;
     case 'media.pause':
       res.action = 'pause';
-      res.progress = progress;
+      res.progress = 0;
       break;
     case 'media.resume':
       res.action = 'start';
-      res.progress = progress;
+      res.progress = 0;
       break;
     case 'media.stop':
       res.action = 'stop';
@@ -28,7 +27,7 @@ export const getAction = ({ event, viewOffset = 99.9, duration }) => {
       break;
     case 'media.scrobble':
       res.action = 'stop';
-      res.progress = progress;
+      res.progress = 90;
       break;
   }
   return res;
