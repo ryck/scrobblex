@@ -1,5 +1,6 @@
 import chalk from 'chalk';
 import axios from 'axios';
+import { formatDistanceToNow } from 'date-fns';
 
 import { logger } from './logger.js';
 
@@ -13,8 +14,14 @@ export const scrobbleRequest = async ({ action, body, access_token, title }) => 
         'trakt-api-version': '2',
       },
     });
-    logger.info(`📡 Scrobbling ${title} (${action})`);
+    logger.info(`📡 Scrobbling ${title} (${action} - ${body.progress}%)`);
   } catch (err) {
+    if (err.response.status == '409') {
+      logger.error(
+        `❌ ${chalk.red(`${title} has been scrobbled ${formatDistanceToNow(new Date(err.response.data.watched_at))} ago. Try again in ${formatDistanceToNow(new Date(err.response.data.expires_at))}.`)}`,
+      );
+      return;
+    }
     logger.error(`❌ ${chalk.red(`Scrobble API error: ${err.message}`)}`);
   }
 };
