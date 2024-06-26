@@ -37,10 +37,21 @@ app.set('view engine', 'ejs');
 const orange = chalk.rgb(249, 115, 22);
 
 app.post('/api', upload.single('thumb'), async (req, res) => {
+  if (!req.body.payload) {
+    logger.error(`❌ ${chalk.red(`Missing payload.`)}`);
+    return;
+  }
+
   const payload = JSON.parse(req.body.payload);
-  const event = payload.event;
-  const type = payload.Metadata.type;
-  const title = payload.Metadata.title;
+
+  const event = payload?.event;
+  const type = payload?.Metadata?.type;
+  const title = payload?.Metadata?.title;
+
+  if (!event || !type || !title) {
+    logger.error(`❌ ${chalk.red(`Missing data.`)}`);
+    return;
+  }
 
   logger.debug(JSON.stringify(payload, null, 2));
   logger.info(`❗️ Event: ${event} 🏷️ Type: ${type} 🔖 Title: ${title}`);
