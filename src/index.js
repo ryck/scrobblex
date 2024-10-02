@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import morgan from 'morgan';
 import multer from 'multer';
 import { fromUnixTime, differenceInHours } from 'date-fns';
 import chalk from 'chalk';
@@ -16,16 +15,6 @@ const upload = multer({ storage: multer.memoryStorage() });
 import 'dotenv/config';
 
 const localStorage = new LocalStorage('./data');
-
-app.use(
-  morgan('dev', {
-    stream: {
-      write: function (message) {
-        logger.debug(message);
-      },
-    },
-  }),
-);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

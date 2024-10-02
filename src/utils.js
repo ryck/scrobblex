@@ -4,30 +4,31 @@ import { logger } from './logger.js';
 import { scrobbleRequest, findEpisodeRequest, findMovieRequest } from './requests.js';
 
 export const getAction = ({ event, viewOffset = 99.9, duration }) => {
+  const progress = ((viewOffset / duration) * 100).toFixed(2)
   let res = {
     action: 'start', // start, pause, stop
-    progress: 0, //0, 90
+    progress: progress, //0, 90
   };
   switch (event) {
     case 'media.play':
       res.action = 'start';
-      res.progress = 0;
+      res.progress = progress;
       break;
     case 'media.pause':
       res.action = 'pause';
-      res.progress = 0;
+      res.progress = progress;
       break;
     case 'media.resume':
       res.action = 'start';
-      res.progress = 0;
+      res.progress = progress;
       break;
     case 'media.stop':
       res.action = 'stop';
-      res.progress = 0;
+      res.progress = progress;
       break;
     case 'media.scrobble':
       res.action = 'stop';
-      res.progress = 90;
+      res.progress = progress < 90 ? 90 : progress;
       break;
   }
   return res;

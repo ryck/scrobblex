@@ -6,7 +6,7 @@ import { logger } from './logger.js';
 
 export const scrobbleRequest = async ({ action, body, access_token, title }) => {
   try {
-    await axios.post(`https://api.trakt.tv/scrobble/${action}`, JSON.stringify(body), {
+    const response = await axios.post(`https://api.trakt.tv/scrobble/${action}`, JSON.stringify(body), {
       headers: {
         Authorization: `Bearer ${access_token}`,
         'Content-Type': 'application/json',
@@ -15,6 +15,7 @@ export const scrobbleRequest = async ({ action, body, access_token, title }) => 
       },
     });
     logger.info(`📡 Scrobbling ${title} (${action} - ${body.progress}%)`);
+    logger.debug(response)
   } catch (err) {
     if (err.response.status == '409') {
       logger.error(
@@ -70,12 +71,14 @@ export const findEpisodeRequest = async (payload) => {
         'trakt-api-key': process.env.TRAKT_ID,
       },
     });
-
-    const episode = response.data[0].episode;
+    logger.debug(`https://api.trakt.tv/search/${service}/${id}?type=episode`)
+    logger.debug(JSON.stringify(payload, null, 2));
+    logger.debug(JSON.stringify(response.data, null, 2));
+    const {episode, show} = response.data[0];
     logger.debug(episode);
-    const { season, number, title } = episode;
+    logger.debug(show);
     logger.info(
-      `📺 Episode found: S${season.toString().padStart(2, '0')}E${number.toString().padStart(2, '0')} - ${title}`,
+      `📺 Episode found: ${show.title} (${show.year}) - S${episode.season.toString().padStart(2, '0')}E${episode.number.toString().padStart(2, '0')} - ${episode.title}`,
     );
     return episode;
   } catch (err) {
