@@ -60,14 +60,14 @@ export const handle = ({ payload, access_token }) => {
           handleRatingSeason({ payload, access_token })
           break;
         case 'episode':
-          // handleRatingEpisode({ payload, access_token })
+          handleRatingEpisode({ payload, access_token })
           break;
         default:
           logger.error(`❌ ${chalk.red(`Type ${payload.Metadata.type} is not supported`)}`);
           break;
       }
     } else if (librarySectionType == 'movie') {
-      // handleRatingMovie({ payload, access_token });
+      handleRatingMovie({ payload, access_token });
     }
   }
 }
@@ -89,6 +89,7 @@ export const handlePlayingMovie = async ({ payload, access_token }) => {
   const title = `🎬 ${payload.Metadata.title}`;
   scrobbleRequest({ action, body, access_token, title });
 };
+
 export const handlePlayingShow = async ({ payload, access_token }) => {
   const { event } = payload;
   const { viewOffset, duration } = payload.Metadata;
@@ -119,8 +120,8 @@ export const handleRatingShow = async ({ payload, access_token }) => {
   const body = {
     "shows": [
       {
+        ...show,
         "rating": rating,
-        ...show
       }
     ]
   };
@@ -152,7 +153,49 @@ export const handleRatingSeason = async ({ payload, access_token }) => {
       }
     ]
   };
+  const title = `📺 ${payload.Metadata.title}`;
+  rateRequest({ body, access_token, title, rating });
+};
 
+
+export const handleRatingEpisode = async ({ payload, access_token }) => {
+  const { rating } = payload;
+  const episode = await findEpisodeRequest(payload);
+
+  if (!episode) {
+    logger.error(`❌ ${chalk.red(`Couldn't find episode info`)}`);
+    return;
+  }
+  const body = {
+    "episodes": [
+      {
+        ...episode,
+        "rating": rating,
+      }
+    ]
+  };
+  const title = `📺 ${payload.Metadata.title}`;
+  rateRequest({ body, access_token, title, rating });
+};
+
+
+
+export const handleRatingMovie = async ({ payload, access_token }) => {
+  const { rating } = payload;
+  const movie = await findMovieRequest(payload);
+
+  if (!movie) {
+    logger.error(`❌ ${chalk.red(`Couldn't find movie info`)}`);
+    return;
+  }
+  const body = {
+    "movies": [
+      {
+        ...movie,
+        "rating": rating,
+      }
+    ]
+  };
   const title = `📺 ${payload.Metadata.title}`;
   rateRequest({ body, access_token, title, rating });
 };
