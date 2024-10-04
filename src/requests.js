@@ -27,6 +27,31 @@ export const scrobbleRequest = async ({ action, body, access_token, title }) => 
   }
 };
 
+export const rateRequest = async ({ body, access_token, title, rating }) => {
+
+  if (!rating) {
+    logger.error(`❌ ${chalk.red(`No rating, aborting`)}`);
+    return
+  }
+
+  try {
+    const response = await axios.post(`https://api.trakt.tv/sync/ratings`, JSON.stringify(body), {
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+        'Content-Type': 'application/json',
+        'trakt-api-key': process.env.TRAKT_ID,
+        'trakt-api-version': '2',
+      },
+    });
+    logger.info(`❤️ Rating ${title} with (${rating}) ${'⭐'.repeat(rating)}`);
+    logger.debug(JSON.stringify(response.data, null, 2))
+  } catch (err) {
+    logger.info(JSON.stringify(err, null, 2))
+    logger.error(`❌ ${chalk.red(`Rate API error: ${err.message}`)}`);
+  }
+};
+
+
 export const findMovieRequest = async (payload) => {
   const Guid = payload.Metadata.Guid;
   const service = Guid[0].id.substring(0, 4);
@@ -74,7 +99,7 @@ export const findEpisodeRequest = async (payload) => {
     logger.debug(`https://api.trakt.tv/search/${service}/${id}?type=episode`)
     logger.debug(JSON.stringify(payload, null, 2));
     logger.debug(JSON.stringify(response.data, null, 2));
-    const {episode, show} = response.data[0];
+    const { episode, show } = response.data[0];
     logger.debug(episode);
     logger.debug(show);
     logger.info(
@@ -85,6 +110,64 @@ export const findEpisodeRequest = async (payload) => {
     logger.error(`❌ ${chalk.red(`Search episode API error: ${err.message}`)}`);
   }
 };
+
+
+export const findShowRequest = async (payload) => {
+  const Guid = payload.Metadata.Guid;
+  const service = Guid[0].id.substring(0, 4);
+  const id = Guid[0].id.substring(7);
+  logger.info(
+    `🔍 Finding info for ${payload.Metadata.title} (${payload.Metadata.year}) using ${service}://${id}`,
+  );
+
+  try {
+    const response = await axios.get(`https://api.trakt.tv/search/${service}/${id}?type=show`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'trakt-api-version': '2',
+        'trakt-api-key': process.env.TRAKT_ID,
+      },
+    });
+    logger.info(`https://api.trakt.tv/search/${service}/${id}?type=show`)
+    logger.debug(JSON.stringify(payload, null, 2));
+    logger.info(JSON.stringify(response.data, null, 2));
+    const { show } = response.data[0];
+    logger.info(JSON.stringify(show, null, 2));
+    logger.info(
+      `📺 Show found: ${show.title} (${show.year})`,
+    );
+    return show;
+  } catch (err) {
+    logger.error(`❌ ${chalk.red(`Search show API error: ${err.message}`)}`);
+  }
+};
+
+
+export const findSeasonRequest = async (payload) => {
+  logger.info(
+    `🔍 Finding info for ${payload.Metadata.parentTitle} (${payload.Metadata.parentYear}) - ${payload.Metadata.title} using ?query=${payload.Metadata.parentTitle} (${payload.Metadata.parentYear})`,
+  );
+
+  try {
+    const response = await axios.get(`https://api.trakt.tv/search/show?query=${payload.Metadata.parentTitle} (${payload.Metadata.parentYear})`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'trakt-api-version': '2',
+        'trakt-api-key': process.env.TRAKT_ID,
+      },
+    });
+    logger.debug(`https://api.trakt.tv/search/show?query${payload.Metadata.parentTitle} (${payload.Metadata.parentYear})`)
+    logger.debug(JSON.stringify(response.data, null, 2));
+    const { show } = response.data[0];
+    logger.info(
+      `📺 Season found: ${show.title} (${show.year})`,
+    );
+    return show;
+  } catch (err) {
+    logger.error(`❌ ${chalk.red(`Search show API error: ${err.message}`)}`);
+  }
+};
+
 
 export const authorizeRequest = async ({ code, redirect_uri, refresh_token, grant_type }) => {
   logger.info(`🔑 Getting token`);
