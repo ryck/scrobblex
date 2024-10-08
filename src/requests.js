@@ -5,17 +5,6 @@ import { formatDistanceToNow } from 'date-fns';
 import { logger } from './logger.js';
 import { api } from './api.js';
 
-// api.interceptors.request.use(request => {
-//   console.log('Starting Request', JSON.stringify(request, null, 2))
-//   return request
-// })
-
-// api.interceptors.response.use(response => {
-//   console.log('Response:', JSON.stringify(response, null, 2))
-//   return response
-// })
-
-
 export const scrobbleRequest = async ({ action, body, title }) => {
   try {
     const response = await api.post(`/scrobble/${action}`, JSON.stringify(body), { cache: false });
@@ -138,30 +127,4 @@ export const findSeasonRequest = async (payload) => {
 };
 
 
-export const authorizeRequest = async ({ code, redirect_uri, refresh_token, grant_type }) => {
-  logger.info(`🔑 Getting token`);
-  const client_id = process.env.TRAKT_ID;
-  const client_secret = process.env.TRAKT_SECRET;
 
-  const body = {
-    code,
-    refresh_token,
-    client_id,
-    client_secret,
-    redirect_uri,
-    grant_type,
-  };
-
-  try {
-    const response = await axios.post(`https://api.trakt.tv/oauth/token`, JSON.stringify(body), {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }, { cache: false });
-    const tokens = response.data;
-    logger.debug(tokens);
-    return tokens;
-  } catch (err) {
-    logger.error(`❌ ${chalk.red(`Auth API error: ${err.message}`)}`);
-  }
-};

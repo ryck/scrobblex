@@ -8,7 +8,7 @@ import 'dotenv/config';
 
 import { logger } from './logger.js';
 import { handle } from './utils.js';
-import { authorizeRequest } from './requests.js';
+import { authorizeRequest } from './api.js';
 
 const app = express();
 const PORT = process.env.PORT || 3090;
@@ -83,7 +83,7 @@ app.get('/authorize', async (req, res) => {
     localStorage.setItem('tokens', data);
   } else {
     logger.error(`❌ ${chalk.red(`No tokens found!`)}`);
-    return;
+    return res.status(401)
   }
 
   res.render('pages/index', {
