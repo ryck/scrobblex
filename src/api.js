@@ -2,11 +2,39 @@ import axios from 'axios';
 import { LocalStorage } from 'node-localstorage';
 import { fromUnixTime, differenceInHours } from 'date-fns';
 import { setupCache } from 'axios-cache-interceptor';
+import chalk from 'chalk';
 
 import { logger } from './logger.js';
-import { authorizeRequest } from './requests.js';
 
 const localStorage = new LocalStorage('./data');
+
+export const authorizeRequest = async ({ code, redirect_uri, refresh_token, grant_type }) => {
+    logger.info(`🔑 Getting token`);
+    const client_id = process.env.TRAKT_ID;
+    const client_secret = process.env.TRAKT_SECRET;
+
+    const body = {
+        code,
+        refresh_token,
+        client_id,
+        client_secret,
+        redirect_uri,
+        grant_type,
+    };
+
+    try {
+        const response = await axios.post(`https://api.trakt.tv/oauth/token`, JSON.stringify(body), {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }, { cache: false });
+        const tokens = response.data;
+        logger.debug(tokens);
+        return tokens;
+    } catch (err) {
+        logger.error(`❌ ${chalk.red(`Auth API error: ${err.message}`)}`);
+    }
+};
 
 export const getAccessToken = async () => {
     const tokens = localStorage.getItem('tokens');
@@ -16,7 +44,7 @@ export const getAccessToken = async () => {
         logger.info(
             `ℹ️ Have you authorized the application? Go to http://localhost:${process.env.PORT} to do it if needed.`,
         );
-        return res.status(401);
+        throw new Error('No tokens found! Please authorize the application again...');
     }
     let { access_token, refresh_token, created_at } = JSON.parse(tokens);
 
@@ -38,7 +66,7 @@ export const getAccessToken = async () => {
             access_token = tokens.access_token;
         } else {
             logger.error(`❌ ${chalk.red(`No tokens found!`)}`);
-            return res.status(401);
+            throw new Error('No tokens found! Please authorize the application again...');
         }
     }
 
