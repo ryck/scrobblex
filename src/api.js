@@ -14,7 +14,7 @@ export const getAccessToken = async () => {
     if (!tokens || tokens == 'undefined') {
         logger.error(`❌ ${chalk.red(`Error reading the file.`)}`);
         logger.info(
-            `ℹ️ Have you authorized the application? Go to ${req.protocol}://${req.get('host')} to do it if needed.`,
+            `ℹ️ Have you authorized the application? Go to http://localhost:${process.env.PORT} to do it if needed.`,
         );
         return res.status(401);
     }
@@ -28,7 +28,7 @@ export const getAccessToken = async () => {
     if (tokenAge > 1440) {
         // tokens expire after 3 months, so we refresh after 2
         logger.info(`🔐 Token expired, refreshing...`);
-        const redirect_uri = `${req.protocol}://${req.get('host')}/authorize`;
+        const redirect_uri = `http://localhost:${process.env.PORT}/authorize`;
 
         const tokens = await authorizeRequest({ grant_type: 'refresh_token', redirect_uri, refresh_token });
 
