@@ -3,31 +3,34 @@ import axios from 'axios';
 import { formatDistanceToNow } from 'date-fns';
 
 import { logger } from './logger.js';
+import { api } from './api.js';
 
-export const scrobbleRequest = async ({ action, body, access_token, title }) => {
+// api.interceptors.request.use(request => {
+//   console.log('Starting Request', JSON.stringify(request, null, 2))
+//   return request
+// })
+
+// api.interceptors.response.use(response => {
+//   console.log('Response:', JSON.stringify(response, null, 2))
+//   return response
+// })
+
+
+export const scrobbleRequest = async ({ action, body, title }) => {
   try {
-    const response = await axios.post(`https://api.trakt.tv/scrobble/${action}`, JSON.stringify(body), {
-      headers: {
-        Authorization: `Bearer ${access_token}`,
-        'Content-Type': 'application/json',
-        'trakt-api-key': process.env.TRAKT_ID,
-        'trakt-api-version': '2',
-      },
-    });
+    const response = await api.post(`/scrobble/${action}`, JSON.stringify(body), { cache: false });
     logger.info(`📡 Scrobbling ${title} (${action} - ${body.progress}%)`);
-    logger.debug(response)
   } catch (err) {
     if (err.response.status == '409') {
       logger.error(
         `❌ ${chalk.red(`${title} has been scrobbled ${formatDistanceToNow(new Date(err.response.data.watched_at))} ago. Try again in ${formatDistanceToNow(new Date(err.response.data.expires_at))}.`)}`,
       );
-      return;
     }
     logger.error(`❌ ${chalk.red(`Scrobble API error: ${err.message}`)}`);
   }
 };
 
-export const rateRequest = async ({ body, access_token, title, rating }) => {
+export const rateRequest = async ({ body, title, rating }) => {
 
   if (!rating) {
     logger.error(`❌ ${chalk.red(`No rating, aborting`)}`);
@@ -35,14 +38,7 @@ export const rateRequest = async ({ body, access_token, title, rating }) => {
   }
 
   try {
-    const response = await axios.post(`https://api.trakt.tv/sync/ratings`, JSON.stringify(body), {
-      headers: {
-        Authorization: `Bearer ${access_token}`,
-        'Content-Type': 'application/json',
-        'trakt-api-key': process.env.TRAKT_ID,
-        'trakt-api-version': '2',
-      },
-    });
+    const response = await api.post(`/sync/ratings`, JSON.stringify(body), { cache: false });
     logger.info(`❤️ Rating ${title} with (${rating}) ${'⭐'.repeat(rating)}`);
     logger.debug(JSON.stringify(response.data, null, 2))
   } catch (err) {
@@ -60,13 +56,7 @@ export const findMovieRequest = async (payload) => {
   logger.info(`🔍 Finding movie for ${payload.Metadata.title} (${payload.Metadata.year}) using ${service}://${id}`);
 
   try {
-    const response = await axios.get(`https://api.trakt.tv/search/${service}/${id}?type=movie`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'trakt-api-version': '2',
-        'trakt-api-key': process.env.TRAKT_ID,
-      },
-    });
+    const response = await api.get(`https://api.trakt.tv/search/${service}/${id}?type=movie`, { ttl: 1000 * 60 * 180 });
 
     const movie = response.data[0].movie;
     logger.debug(movie);
@@ -89,14 +79,7 @@ export const findEpisodeRequest = async (payload) => {
   );
 
   try {
-    const response = await axios.get(`https://api.trakt.tv/search/${service}/${id}?type=episode`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'trakt-api-version': '2',
-        'trakt-api-key': process.env.TRAKT_ID,
-      },
-    });
-    logger.debug(`https://api.trakt.tv/search/${service}/${id}?type=episode`)
+    const response = await api.get(`/search/${service}/${id}?type=episode`, { ttl: 1000 * 60 * 180 });
     logger.debug(JSON.stringify(payload, null, 2));
     logger.debug(JSON.stringify(response.data, null, 2));
     const { episode, show } = response.data[0];
@@ -121,14 +104,7 @@ export const findShowRequest = async (payload) => {
   );
 
   try {
-    const response = await axios.get(`https://api.trakt.tv/search/${service}/${id}?type=show`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'trakt-api-version': '2',
-        'trakt-api-key': process.env.TRAKT_ID,
-      },
-    });
-    logger.info(`https://api.trakt.tv/search/${service}/${id}?type=show`)
+    const response = await api.get(`/search/${service}/${id}?type=show`, { ttl: 1000 * 60 * 180 });
     logger.debug(JSON.stringify(payload, null, 2));
     logger.info(JSON.stringify(response.data, null, 2));
     const { show } = response.data[0];
@@ -149,14 +125,7 @@ export const findSeasonRequest = async (payload) => {
   );
 
   try {
-    const response = await axios.get(`https://api.trakt.tv/search/show?query=${payload.Metadata.parentTitle} (${payload.Metadata.parentYear})`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'trakt-api-version': '2',
-        'trakt-api-key': process.env.TRAKT_ID,
-      },
-    });
-    logger.debug(`https://api.trakt.tv/search/show?query${payload.Metadata.parentTitle} (${payload.Metadata.parentYear})`)
+    const response = await api.get(`/search/show?query=${payload.Metadata.parentTitle} (${payload.Metadata.parentYear})`, { ttl: 1000 * 60 * 180 });
     logger.debug(JSON.stringify(response.data, null, 2));
     const { show } = response.data[0];
     logger.info(
@@ -188,7 +157,7 @@ export const authorizeRequest = async ({ code, redirect_uri, refresh_token, gran
       headers: {
         'Content-Type': 'application/json',
       },
-    });
+    }, { cache: false });
     const tokens = response.data;
     logger.debug(tokens);
     return tokens;
