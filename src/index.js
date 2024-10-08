@@ -83,6 +83,9 @@ app.get('/authorize', async (req, res) => {
     localStorage.setItem('tokens', data);
   } else {
     logger.error(`❌ ${chalk.red(`No tokens found!`)}`);
+    logger.info(
+      `ℹ️ Have you authorized the application? Go to ${req.protocol}://${req.get('host')} to do it if needed.`,
+    );
     return res.status(401)
   }
 

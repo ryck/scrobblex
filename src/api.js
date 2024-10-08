@@ -67,6 +67,9 @@ export const getAccessToken = async () => {
             access_token = tokens.access_token;
         } else {
             logger.error(`❌ ${chalk.red(`No tokens found!`)}`);
+            logger.info(
+                `ℹ️ Have you authorized the application? Go to http://localhost:${process.env.PORT} to do it if needed.`,
+            );
             return
         }
     }
