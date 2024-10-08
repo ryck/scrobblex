@@ -3,7 +3,7 @@ import chalk from 'chalk';
 import { logger } from './logger.js';
 import { scrobbleRequest, rateRequest, findEpisodeRequest, findMovieRequest, findShowRequest, findSeasonRequest } from './requests.js';
 
-export const getAction = ({ event, viewOffset = 99.9, duration }) => {
+export const getAction = ({ event, viewOffset = 90, duration }) => {
   const progress = ((viewOffset / duration) * 100).toFixed(2)
   let res = {
     action: 'start', // start, pause, stop
@@ -34,7 +34,7 @@ export const getAction = ({ event, viewOffset = 99.9, duration }) => {
   return res;
 };
 
-export const handle = ({ payload, access_token }) => {
+export const handle = ({ payload }) => {
   const scrobblingEvents = ['media.play', 'media.pause', 'media.resume', 'media.stop', 'media.scrobble'];
   const ratingEvents = ['media.rate']
   const { librarySectionType, type } = payload.Metadata;
@@ -44,35 +44,34 @@ export const handle = ({ payload, access_token }) => {
   }
   if (scrobblingEvents.includes(payload.event)) {
     if (librarySectionType == 'show') {
-      handlePlayingShow({ payload, access_token });
+      handlePlayingShow({ payload });
     } else if (librarySectionType == 'movie') {
-      handlePlayingMovie({ payload, access_token });
+      handlePlayingMovie({ payload });
     }
   }
   if (ratingEvents.includes(payload.event)) {
-    logger.info('rating!')
     if (librarySectionType == 'show') {
       switch (type) {
         case 'show':
-          handleRatingShow({ payload, access_token })
+          handleRatingShow({ payload })
           break;
         case 'season':
-          handleRatingSeason({ payload, access_token })
+          handleRatingSeason({ payload })
           break;
         case 'episode':
-          handleRatingEpisode({ payload, access_token })
+          handleRatingEpisode({ payload })
           break;
         default:
           logger.error(`❌ ${chalk.red(`Type ${payload.Metadata.type} is not supported`)}`);
           break;
       }
     } else if (librarySectionType == 'movie') {
-      handleRatingMovie({ payload, access_token });
+      handleRatingMovie({ payload });
     }
   }
 }
 
-export const handlePlayingMovie = async ({ payload, access_token }) => {
+export const handlePlayingMovie = async ({ payload }) => {
   const { event } = payload;
   const { viewOffset, duration } = payload.Metadata;
   const { action, progress } = getAction({ event, viewOffset, duration });
@@ -87,10 +86,10 @@ export const handlePlayingMovie = async ({ payload, access_token }) => {
   };
 
   const title = `🎬 ${payload.Metadata.title}`;
-  scrobbleRequest({ action, body, access_token, title });
+  scrobbleRequest({ action, body, title });
 };
 
-export const handlePlayingShow = async ({ payload, access_token }) => {
+export const handlePlayingShow = async ({ payload }) => {
   const { event } = payload;
   const { viewOffset, duration } = payload.Metadata;
   const { action, progress } = getAction({ event, viewOffset, duration });
@@ -106,10 +105,10 @@ export const handlePlayingShow = async ({ payload, access_token }) => {
   };
 
   const title = `📺 ${payload.Metadata.title}`;
-  scrobbleRequest({ action, body, access_token, title });
+  scrobbleRequest({ action, body, title });
 };
 
-export const handleRatingShow = async ({ payload, access_token }) => {
+export const handleRatingShow = async ({ payload }) => {
   const { rating } = payload;
   const show = await findShowRequest(payload);
 
@@ -128,11 +127,11 @@ export const handleRatingShow = async ({ payload, access_token }) => {
 
   logger.info(JSON.stringify(body, null, 2))
   const title = `📺 ${payload.Metadata.title}`;
-  rateRequest({ body, access_token, title, rating });
+  rateRequest({ body, title, rating });
 };
 
 
-export const handleRatingSeason = async ({ payload, access_token }) => {
+export const handleRatingSeason = async ({ payload }) => {
   const { rating } = payload;
   const show = await findSeasonRequest(payload);
 
@@ -154,11 +153,11 @@ export const handleRatingSeason = async ({ payload, access_token }) => {
     ]
   };
   const title = `📺 ${payload.Metadata.title}`;
-  rateRequest({ body, access_token, title, rating });
+  rateRequest({ body, title, rating });
 };
 
 
-export const handleRatingEpisode = async ({ payload, access_token }) => {
+export const handleRatingEpisode = async ({ payload }) => {
   const { rating } = payload;
   const episode = await findEpisodeRequest(payload);
 
@@ -175,12 +174,12 @@ export const handleRatingEpisode = async ({ payload, access_token }) => {
     ]
   };
   const title = `📺 ${payload.Metadata.title}`;
-  rateRequest({ body, access_token, title, rating });
+  rateRequest({ body, title, rating });
 };
 
 
 
-export const handleRatingMovie = async ({ payload, access_token }) => {
+export const handleRatingMovie = async ({ payload }) => {
   const { rating } = payload;
   const movie = await findMovieRequest(payload);
 
@@ -197,5 +196,5 @@ export const handleRatingMovie = async ({ payload, access_token }) => {
     ]
   };
   const title = `📺 ${payload.Metadata.title}`;
-  rateRequest({ body, access_token, title, rating });
+  rateRequest({ body, title, rating });
 };

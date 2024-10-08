@@ -8,6 +8,7 @@
 ## Description
 
 Self-hosted app that enables Plex scrobbling integration with Trakt via webhooks.
+It also allows you to push your ratings to Trakt.
 
 Plex provides webhook integration for all Plex Pass subscribers, and users of their servers. A webhook is a request that the Plex application sends to third party services when a user takes an action, such as watching a movie or episode.
 

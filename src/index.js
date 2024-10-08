@@ -1,9 +1,11 @@
+import 'dotenv/config'
 import express from 'express';
 import cors from 'cors';
 import multer from 'multer';
-import { fromUnixTime, differenceInHours } from 'date-fns';
 import chalk from 'chalk';
 import { LocalStorage } from 'node-localstorage';
+import 'dotenv/config';
+
 import { logger } from './logger.js';
 import { handle } from './utils.js';
 import { authorizeRequest } from './requests.js';
@@ -12,7 +14,6 @@ const app = express();
 const PORT = process.env.PORT || 3090;
 
 const upload = multer({ storage: multer.memoryStorage() });
-import 'dotenv/config';
 
 const localStorage = new LocalStorage('./data');
 
@@ -45,44 +46,9 @@ app.post('/api', upload.single('thumb'), async (req, res) => {
   logger.debug(JSON.stringify(payload, null, 2));
   logger.info(`❗️ Event: ${event} 🏷️ Type: ${type} 🔖 Title: ${title}`);
 
-  const tokens = localStorage.getItem('tokens');
 
-  if (!tokens || tokens == 'undefined') {
-    logger.error(`❌ ${chalk.red(`Error reading the file.`)}`);
-    logger.info(
-      `ℹ️ Have you authorized the application? Go to ${req.protocol}://${req.get('host')} to do it if needed.`,
-    );
-    return res.status(401);
-  }
-  let { access_token, refresh_token, created_at } = JSON.parse(tokens);
 
-  if (!access_token) {
-    throw new Error('No access token found! Please authorize the application again...');
-  }
-
-  if (!refresh_token) {
-    throw new Error('No access token found! Please authorize the application again...');
-  }
-
-  const tokenAge = differenceInHours(new Date(), new Date(fromUnixTime(created_at)));
-  if (tokenAge > 1440) {
-    // tokens expire after 3 months, so we refresh after 2
-    logger.info(`🔐 Token expired, refreshing...`);
-    const redirect_uri = `${req.protocol}://${req.get('host')}/authorize`;
-
-    const tokens = await authorizeRequest({ grant_type: 'refresh_token', redirect_uri, refresh_token });
-
-    if (tokens) {
-      const data = JSON.stringify(tokens);
-      localStorage.setItem('tokens', data);
-      access_token = tokens.access_token;
-    } else {
-      logger.error(`❌ ${chalk.red(`No tokens found!`)}`);
-      return res.status(401);
-    }
-  }
-
-  handle({ payload, access_token });
+  handle({ payload });
   return res.status(200);
 });
 
