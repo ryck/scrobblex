@@ -1,7 +1,7 @@
 {
   "name": "scrobblex",
   "description": "Self-hosted app that enables Plex scrobbling integration with Trakt via webhooks",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "main": "src/index.js",
   "type": "module",
   "license": "MIT",

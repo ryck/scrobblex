@@ -40,16 +40,17 @@ export const getAccessToken = async () => {
     const tokens = localStorage.getItem('tokens');
 
     if (!tokens || tokens == 'undefined') {
-        logger.error(`❌ ${chalk.red(`Error reading the file.`)}`);
+        logger.error(`❌ ${chalk.red(`Error getting token.`)}`);
         logger.info(
             `ℹ️ Have you authorized the application? Go to http://localhost:${process.env.PORT} to do it if needed.`,
         );
-        throw new Error('No tokens found! Please authorize the application again...');
+        return
     }
     let { access_token, refresh_token, created_at } = JSON.parse(tokens);
 
     if (!access_token || !refresh_token) {
-        throw new Error('No access / refresh token found! Please authorize the application again...');
+        logger.error(`❌ ${chalk.red(`No access / refresh token found! Please authorize the application again...`)}`);
+        return
     }
 
     const tokenAge = differenceInHours(new Date(), new Date(fromUnixTime(created_at)));
@@ -66,7 +67,7 @@ export const getAccessToken = async () => {
             access_token = tokens.access_token;
         } else {
             logger.error(`❌ ${chalk.red(`No tokens found!`)}`);
-            throw new Error('No tokens found! Please authorize the application again...');
+            return
         }
     }
 
