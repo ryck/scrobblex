@@ -80,12 +80,21 @@ export const getAccessToken = async () => {
 export const instance = axios.create({
     baseURL: 'https://api.trakt.tv',
     headers: {
-        Authorization: `Bearer ${await getAccessToken()}`,
         'Content-Type': 'application/json',
         'trakt-api-key': process.env.TRAKT_ID,
         'trakt-api-version': '2',
     },
 });
 
+instance.interceptors.request.use(
+    async (config) => {
+        const token = await getAccessToken();
+        if (token) config.headers.Authorization = `Bearer ${token}`;
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
 
 export const api = setupCache(instance);

@@ -26,6 +26,14 @@ app.set('view engine', 'ejs');
 
 const orange = chalk.rgb(249, 115, 22);
 
+const tokens = localStorage.getItem('tokens');
+if (!tokens || tokens == 'undefined') {
+  logger.error(`❌ ${chalk.red(`Error getting token.`)}`);
+  logger.info(
+    `ℹ️ Have you authorized the application? Go to http://localhost:${process.env.PORT} to do it if needed.`,
+  );
+}
+
 app.post('/api', upload.single('thumb'), async (req, res) => {
   if (!req.body.payload) {
     logger.error(`❌ ${chalk.red(`Missing payload.`)}`);
