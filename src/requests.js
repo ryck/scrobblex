@@ -8,7 +8,7 @@ import { api } from './api.js';
 export const scrobbleRequest = async ({ action, body, title }) => {
   try {
     const response = await api.post(`/scrobble/${action}`, JSON.stringify(body), { cache: false });
-    logger.info(`📡 Scrobbling ${title} (${action} - ${body.progress}%)`);
+    logger.info(`📡 Scrobbling ${title} [${action}]`);
   } catch (err) {
     if (err.response.status == '409') {
       logger.error(

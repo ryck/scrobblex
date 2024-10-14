@@ -9,7 +9,7 @@ import { logger } from './logger.js';
 const localStorage = new LocalStorage('./data');
 
 export const authorizeRequest = async ({ code, redirect_uri, refresh_token, grant_type }) => {
-    logger.info(`🔑 Getting token`);
+    logger.info(`🔑 Getting token...`);
     const client_id = process.env.TRAKT_ID;
     const client_secret = process.env.TRAKT_SECRET;
 
@@ -30,6 +30,7 @@ export const authorizeRequest = async ({ code, redirect_uri, refresh_token, gran
         }, { cache: false });
         const tokens = response.data;
         logger.debug(tokens);
+        logger.info(`🔐 Token adquired`);
         return tokens;
     } catch (err) {
         logger.error(`❌ ${chalk.red(`Auth API error: ${err.message}`)}`);
