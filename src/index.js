@@ -26,6 +26,7 @@ app.set('view engine', 'ejs');
 
 const orange = chalk.rgb(249, 115, 22);
 
+
 app.post('/api', upload.single('thumb'), async (req, res) => {
   if (!req.body.payload) {
     logger.error(`❌ ${chalk.red(`Missing payload.`)}`);
@@ -83,6 +84,9 @@ app.get('/authorize', async (req, res) => {
     localStorage.setItem('tokens', data);
   } else {
     logger.error(`❌ ${chalk.red(`No tokens found!`)}`);
+    logger.info(
+      `ℹ️ Have you authorized the application? Go to ${req.protocol}://${req.get('host')} to do it if needed.`,
+    );
     return res.status(401)
   }
 
@@ -98,7 +102,16 @@ app.listen(PORT, (error) => {
   if (!error) {
     logger.info(`🤖 Scrobb${orange('lex')} v${process.env.npm_package_version}`);
     logger.info(`🚀 Connected successfully on http://localhost:${PORT}`);
+
+    const tokens = localStorage.getItem('tokens');
+    if (!tokens || tokens == 'undefined') {
+      logger.error(`❌ ${chalk.red(`Error getting token.`)}`);
+      logger.warn(
+        `⚠️ You need to authorize the app. Please go to http://localhost:${PORT} and follow the instructions.`,
+      );
+    }
   } else {
     logger.error(`❌ ${chalk.red(`Error occurred: ${error.message}`)}`);
   }
 });
+

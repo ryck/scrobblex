@@ -9,7 +9,7 @@ import { logger } from './logger.js';
 const localStorage = new LocalStorage('./data');
 
 export const authorizeRequest = async ({ code, redirect_uri, refresh_token, grant_type }) => {
-    logger.info(`🔑 Getting token`);
+    logger.info(`🔑 Getting token...`);
     const client_id = process.env.TRAKT_ID;
     const client_secret = process.env.TRAKT_SECRET;
 
@@ -30,6 +30,7 @@ export const authorizeRequest = async ({ code, redirect_uri, refresh_token, gran
         }, { cache: false });
         const tokens = response.data;
         logger.debug(tokens);
+        logger.info(`🔐 Token adquired`);
         return tokens;
     } catch (err) {
         logger.error(`❌ ${chalk.red(`Auth API error: ${err.message}`)}`);
@@ -67,6 +68,9 @@ export const getAccessToken = async () => {
             access_token = tokens.access_token;
         } else {
             logger.error(`❌ ${chalk.red(`No tokens found!`)}`);
+            logger.info(
+                `ℹ️ Have you authorized the application? Go to http://localhost:${process.env.PORT} to do it if needed.`,
+            );
             return
         }
     }
@@ -77,12 +81,21 @@ export const getAccessToken = async () => {
 export const instance = axios.create({
     baseURL: 'https://api.trakt.tv',
     headers: {
-        Authorization: `Bearer ${await getAccessToken()}`,
         'Content-Type': 'application/json',
         'trakt-api-key': process.env.TRAKT_ID,
         'trakt-api-version': '2',
     },
 });
 
+instance.interceptors.request.use(
+    async (config) => {
+        const token = await getAccessToken();
+        if (token) config.headers.Authorization = `Bearer ${token}`;
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
 
 export const api = setupCache(instance);
