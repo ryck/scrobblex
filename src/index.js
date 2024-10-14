@@ -26,13 +26,6 @@ app.set('view engine', 'ejs');
 
 const orange = chalk.rgb(249, 115, 22);
 
-const tokens = localStorage.getItem('tokens');
-if (!tokens || tokens == 'undefined') {
-  logger.error(`❌ ${chalk.red(`Error getting token.`)}`);
-  logger.info(
-    `ℹ️ Have you authorized the application? Go to http://localhost:${process.env.PORT} to do it if needed.`,
-  );
-}
 
 app.post('/api', upload.single('thumb'), async (req, res) => {
   if (!req.body.payload) {
@@ -109,7 +102,16 @@ app.listen(PORT, (error) => {
   if (!error) {
     logger.info(`🤖 Scrobb${orange('lex')} v${process.env.npm_package_version}`);
     logger.info(`🚀 Connected successfully on http://localhost:${PORT}`);
+
+    const tokens = localStorage.getItem('tokens');
+    if (!tokens || tokens == 'undefined') {
+      logger.error(`❌ ${chalk.red(`Error getting token.`)}`);
+      logger.warn(
+        `⚠️ You need to authorize the app. Please go to http://localhost:${PORT} and follow the instructions.`,
+      );
+    }
   } else {
     logger.error(`❌ ${chalk.red(`Error occurred: ${error.message}`)}`);
   }
 });
+
