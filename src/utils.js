@@ -3,7 +3,7 @@ import chalk from 'chalk';
 import { logger } from './logger.js';
 import { scrobbleRequest, rateRequest, findEpisodeRequest, findMovieRequest, findShowRequest, findSeasonRequest } from './requests.js';
 
-export const getAction = ({ event, viewOffset = 90, duration }) => {
+export const getAction = ({ event, viewOffset, duration }) => {
   logger.debug(`${viewOffset} / ${duration}`)
   let progress = null
   if (viewOffset && duration) {
@@ -16,23 +16,23 @@ export const getAction = ({ event, viewOffset = 90, duration }) => {
   switch (event) {
     case 'media.play':
       res.action = 'start';
-      res.progress = 0;
+      res.progress = progress ? progress : 0;
       break;
     case 'media.pause':
       res.action = 'pause';
-      res.progress = 0;
+      res.progress = progress ? progress : 0;
       break;
     case 'media.resume':
       res.action = 'start';
-      res.progress = 0;
+      res.progress = progress ? progress : 0;
       break;
     case 'media.stop':
       res.action = 'stop';
-      res.progress = 0;
+      res.progress = progress ? progress : 0;
       break;
     case 'media.scrobble':
       res.action = 'stop';
-      res.progress = 90;
+      res.progress = progress ? progress : 0;
       break;
   }
   return res;
@@ -202,3 +202,14 @@ export const handleRatingMovie = async ({ payload }) => {
   const title = `📺 ${payload.Metadata.title}`;
   rateRequest({ body, title, rating });
 };
+
+export const GetGuid = ({ payload }) => {
+  const Guid = payload.Metadata.Guid;
+
+  const service = Guid[0]?.id?.substring(0, 4)
+  const id = Guid[0]?.id?.substring(7)
+
+  logger.debug(`service: ${service} | id: ${id}`);
+
+  return { service, id }
+}
