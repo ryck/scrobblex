@@ -44,10 +44,7 @@ app.post('/api', upload.single('thumb'), async (req, res) => {
     return;
   }
 
-  logger.debug(JSON.stringify(payload, null, 2));
   logger.info(`❗️ Event: ${event} 🏷️ Type: ${type} 🔖 Title: ${title}`);
-
-
 
   handle({ payload });
   return res.status(200);

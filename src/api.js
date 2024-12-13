@@ -29,7 +29,7 @@ export const authorizeRequest = async ({ code, redirect_uri, refresh_token, gran
             },
         }, { cache: false });
         const tokens = response.data;
-        logger.debug(tokens);
+        logger.debug(JSON.stringify(tokens));
         logger.info(`🔐 Token adquired`);
         return tokens;
     } catch (err) {

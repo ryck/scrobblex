@@ -32,7 +32,7 @@ export const getAction = ({ event, viewOffset, duration }) => {
       break;
     case 'media.scrobble':
       res.action = 'stop';
-      res.progress = progress ? progress : 0;
+      res.progress = progress && progress < 80 ? progress : 90;
       break;
   }
   return res;
@@ -46,6 +46,9 @@ export const handle = ({ payload }) => {
     logger.error(`❌ ${chalk.red(`Event ${payload.event} is not supported`)}`);
     return;
   }
+
+  logger.debug(JSON.stringify(payload, null, 2));
+
   if (scrobblingEvents.includes(payload.event)) {
     if (librarySectionType == 'show') {
       handlePlayingShow({ payload });

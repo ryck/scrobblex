@@ -27,11 +27,11 @@ export const rateRequest = async ({ body, title, rating }) => {
     logger.error(`❌ ${chalk.red(`No rating, aborting`)}`);
     return
   }
-
+  logger.debug(JSON.stringify(body, null, 2))
   try {
     const response = await api.post(`/sync/ratings`, JSON.stringify(body), { cache: false });
     logger.info(`❤️ Rating ${title} with (${rating}) ${'⭐'.repeat(rating)}`);
-    // logger.debug(JSON.stringify(response.data, null, 2))
+    logger.debug(JSON.stringify(response.data, null, 2))
   } catch (err) {
     logger.info(JSON.stringify(err, null, 2))
     logger.error(`❌ ${chalk.red(`Rate API error: ${err.message}`)}`);
