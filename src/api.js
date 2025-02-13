@@ -55,8 +55,8 @@ export const getAccessToken = async () => {
     }
 
     const tokenAge = differenceInHours(new Date(), new Date(fromUnixTime(created_at)));
-    if (tokenAge > 1440) {
-        // tokens expire after 3 months, so we refresh after 2
+    if (tokenAge > 23) {
+        // tokens expire after 24 hours, so we refresh after 23
         logger.info(`🔐 Token expired, refreshing...`);
         const redirect_uri = `http://localhost:${process.env.PORT}/authorize`;
 
