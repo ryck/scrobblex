@@ -29,7 +29,7 @@ export const authorizeRequest = async ({ code, redirect_uri, refresh_token, gran
             },
         }, { cache: false });
         const tokens = response.data;
-        logger.debug(tokens);
+        logger.debug(JSON.stringify(tokens));
         logger.info(`🔐 Token adquired`);
         return tokens;
     } catch (err) {
@@ -55,8 +55,8 @@ export const getAccessToken = async () => {
     }
 
     const tokenAge = differenceInHours(new Date(), new Date(fromUnixTime(created_at)));
-    if (tokenAge > 1440) {
-        // tokens expire after 3 months, so we refresh after 2
+    if (tokenAge > 23) {
+        // tokens expire after 24 hours, so we refresh after 23
         logger.info(`🔐 Token expired, refreshing...`);
         const redirect_uri = `http://localhost:${process.env.PORT}/authorize`;
 

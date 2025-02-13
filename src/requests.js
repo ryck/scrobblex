@@ -27,11 +27,11 @@ export const rateRequest = async ({ body, title, rating }) => {
     logger.error(`❌ ${chalk.red(`No rating, aborting`)}`);
     return
   }
-
+  logger.debug(JSON.stringify(body, null, 2))
   try {
     const response = await api.post(`/sync/ratings`, JSON.stringify(body), { cache: false });
     logger.info(`❤️ Rating ${title} with (${rating}) ${'⭐'.repeat(rating)}`);
-    // logger.debug(JSON.stringify(response.data, null, 2))
+    logger.debug(JSON.stringify(response.data, null, 2))
   } catch (err) {
     logger.info(JSON.stringify(err, null, 2))
     logger.error(`❌ ${chalk.red(`Rate API error: ${err.message}`)}`);
@@ -81,8 +81,8 @@ export const findEpisodeRequest = async (payload) => {
 
   try {
     const response = await api.get(`/search/${service}/${id}?type=episode`, { ttl: 1000 * 60 * 180 });
-    // logger.debug(JSON.stringify(payload, null, 2));
-    // logger.debug(JSON.stringify(response.data, null, 2));
+    logger.debug(`/search/${service}/${id}?type=episode`)
+    logger.debug(JSON.stringify(response.data, null, 2));
     if (!response.data.length) {
       logger.error(`❌ ${chalk.red(`Response was empty!`)}`);
       return
@@ -113,8 +113,8 @@ export const findShowRequest = async (payload) => {
 
   try {
     const response = await api.get(`/search/${service}/${id}?type=show`, { ttl: 1000 * 60 * 180 });
-    // logger.debug(JSON.stringify(payload, null, 2));
-    // logger.debug(JSON.stringify(response.data, null, 2));
+    logger.debug(JSON.stringify(payload, null, 2));
+    logger.debug(JSON.stringify(response.data, null, 2));
     if (!response.data.length) {
       logger.error(`❌ ${chalk.red(`Response was empty!`)}`);
       return
@@ -138,7 +138,7 @@ export const findSeasonRequest = async (payload) => {
 
   try {
     const response = await api.get(`/search/show?query=${payload.Metadata.parentTitle} (${payload.Metadata.parentYear})`, { ttl: 1000 * 60 * 180 });
-    // logger.debug(JSON.stringify(response.data, null, 2));
+    logger.debug(JSON.stringify(response.data, null, 2));
     if (!response.data.length) {
       logger.error(`❌ ${chalk.red(`Response was empty!`)}`);
       return

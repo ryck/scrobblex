@@ -4,6 +4,8 @@ import cors from 'cors';
 import multer from 'multer';
 import chalk from 'chalk';
 import { LocalStorage } from 'node-localstorage';
+import _ from 'lodash';
+import "express-async-errors";
 import 'dotenv/config';
 
 import { logger } from './logger.js';
@@ -17,17 +19,24 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 const localStorage = new LocalStorage('./data');
 
+function errorHandler(err, req, res, next) {
+  console.error(err.stack);
+  logger.error(`❌ ${chalk.red(err.stack)}`);
+
+  res.status(500).json({ error: 'Internal Server Error' });
+}
+
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+app.use(errorHandler)
 app.use('/favicon.ico', express.static('favicon.ico'));
-
 app.set('view engine', 'ejs');
 
 const orange = chalk.rgb(249, 115, 22);
 
-
-app.post('/api', upload.single('thumb'), async (req, res) => {
+app.post('/plex', upload.single('thumb'), async (req, res) => {
   if (!req.body.payload) {
     logger.error(`❌ ${chalk.red(`Missing payload.`)}`);
     return;
@@ -38,18 +47,26 @@ app.post('/api', upload.single('thumb'), async (req, res) => {
   const event = payload?.event;
   const type = payload?.Metadata?.type;
   const title = payload?.Metadata?.title;
+  const id = payload?.Account?.id
+  const name = payload?.Account?.title
 
   if (!event || !type || !title) {
     logger.error(`❌ ${chalk.red(`Missing data.`)}`);
     return;
   }
 
-  logger.debug(JSON.stringify(payload, null, 2));
   logger.info(`❗️ Event: ${event} 🏷️ Type: ${type} 🔖 Title: ${title}`);
 
-
+  if (process.env.PLEX_ID) {
+    if (!process.env.PLEX_ID.split(",").includes(id.toString())) {
+      logger.error(`❌ ${chalk.red(`Account ID (${id} - ${name}) not in the list of allowed IDs: ${process.env.PLEX_ID}`)}`);
+      return;
+    }
+  }
 
   handle({ payload });
+
+
   return res.status(200);
 });
 
@@ -114,4 +131,3 @@ app.listen(PORT, (error) => {
     logger.error(`❌ ${chalk.red(`Error occurred: ${error.message}`)}`);
   }
 });
-
