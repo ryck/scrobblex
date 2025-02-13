@@ -81,8 +81,8 @@ export const findEpisodeRequest = async (payload) => {
 
   try {
     const response = await api.get(`/search/${service}/${id}?type=episode`, { ttl: 1000 * 60 * 180 });
-    // logger.debug(JSON.stringify(payload, null, 2));
-    // logger.debug(JSON.stringify(response.data, null, 2));
+    logger.debug(`/search/${service}/${id}?type=episode`)
+    logger.debug(JSON.stringify(response.data, null, 2));
     if (!response.data.length) {
       logger.error(`❌ ${chalk.red(`Response was empty!`)}`);
       return
@@ -113,8 +113,8 @@ export const findShowRequest = async (payload) => {
 
   try {
     const response = await api.get(`/search/${service}/${id}?type=show`, { ttl: 1000 * 60 * 180 });
-    // logger.debug(JSON.stringify(payload, null, 2));
-    // logger.debug(JSON.stringify(response.data, null, 2));
+    logger.debug(JSON.stringify(payload, null, 2));
+    logger.debug(JSON.stringify(response.data, null, 2));
     if (!response.data.length) {
       logger.error(`❌ ${chalk.red(`Response was empty!`)}`);
       return
@@ -138,7 +138,7 @@ export const findSeasonRequest = async (payload) => {
 
   try {
     const response = await api.get(`/search/show?query=${payload.Metadata.parentTitle} (${payload.Metadata.parentYear})`, { ttl: 1000 * 60 * 180 });
-    // logger.debug(JSON.stringify(response.data, null, 2));
+    logger.debug(JSON.stringify(response.data, null, 2));
     if (!response.data.length) {
       logger.error(`❌ ${chalk.red(`Response was empty!`)}`);
       return
