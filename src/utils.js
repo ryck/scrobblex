@@ -39,25 +39,35 @@ export const getAction = ({ event, viewOffset, duration }) => {
 };
 
 export const handle = ({ payload }) => {
-  const scrobblingEvents = ['media.play', 'media.pause', 'media.resume', 'media.stop', 'media.scrobble'];
+  const scrobblingEvents = ['media.scrobble'];
+  // const scrobblingEvents = ['media.play', 'media.pause', 'media.resume', 'media.stop', 'media.scrobble'];
   const ratingEvents = ['media.rate']
-  const { librarySectionType, type } = payload.Metadata;
+  const { type } = payload.Metadata;
   if (![...scrobblingEvents, ...ratingEvents].includes(payload.event)) {
-    logger.error(`❌ ${chalk.red(`Event ${payload.event} is not supported`)}`);
-    return;
+    logger.debug(`❌ ${chalk.red(`Event ${payload.event} is not supported`)}`);
+    // logger.debug(JSON.stringify(payload, null, 2));
+    return
   }
 
   logger.debug(JSON.stringify(payload, null, 2));
 
   if (scrobblingEvents.includes(payload.event)) {
-    if (librarySectionType == 'show') {
-      handlePlayingShow({ payload });
-    } else if (librarySectionType == 'movie') {
-      handlePlayingMovie({ payload });
+    if (['show', 'season', 'episode'].includes(type)) {
+      try {
+        handlePlayingShow({ payload });
+      } catch (error) {
+        throw new Error(`${error.message}`);
+      }
+    } else if (['movie'].includes(type)) {
+      try {
+        handlePlayingMovie({ payload });
+      } catch (error) {
+        logger.error(`❌ ${chalk.red(`${error.message}`)}`);
+      }
     }
   }
   if (ratingEvents.includes(payload.event)) {
-    if (librarySectionType == 'show') {
+    if (['show', 'season', 'episode'].includes(type)) {
       switch (type) {
         case 'show':
           handleRatingShow({ payload })
@@ -69,10 +79,10 @@ export const handle = ({ payload }) => {
           handleRatingEpisode({ payload })
           break;
         default:
-          logger.error(`❌ ${chalk.red(`Type ${payload.Metadata.type} is not supported`)}`);
+          throw new Error(`Type ${payload.Metadata.type} is not supported`);
           break;
       }
-    } else if (librarySectionType == 'movie') {
+    } else if (['movie'].includes(type)) {
       handleRatingMovie({ payload });
     }
   }
@@ -207,7 +217,12 @@ export const handleRatingMovie = async ({ payload }) => {
 };
 
 export const GetGuid = ({ payload }) => {
-  const Guid = payload.Metadata.Guid;
+  const Guid = payload?.Metadata?.Guid;
+
+  if (!Guid) {
+    logger.error(`❌ ${chalk.red(`Couldn't find Guid`)}`);
+    return;
+  }
 
   const service = Guid[0]?.id?.substring(0, 4)
   const id = Guid[0]?.id?.substring(7)
