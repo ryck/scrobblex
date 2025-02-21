@@ -55,7 +55,7 @@ app.post('/plex', upload.single('thumb'), async (req, res) => {
     return;
   }
 
-  logger.info(`❗️ Event: ${event} 🏷️ Type: ${type} 🔖 Title: ${title}`);
+  logger.debug(`❗️ Event: ${event} 🏷️ Type: ${type} 🔖 Title: ${title}`);
 
   if (process.env.PLEX_ID) {
     if (!process.env.PLEX_ID.split(",").includes(id.toString())) {
