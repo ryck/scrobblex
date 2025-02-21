@@ -34,7 +34,7 @@ app.use(errorHandler)
 app.use('/favicon.ico', express.static('favicon.ico'));
 app.set('view engine', 'ejs');
 
-const orange = chalk.rgb(249, 115, 22);
+const orange = chalk.rgb(235, 175, 0);
 
 app.post('/plex', upload.single('thumb'), async (req, res) => {
   if (!req.body.payload) {

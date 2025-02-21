@@ -89,27 +89,27 @@
     <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
       <div class="max-w-screen-lg text-gray-500 sm:text-lg dark:text-gray-400">
         <h2 class="mb-4 text-4xl tracking-tight font-bold text-gray-900 dark:text-white">
-          Scrobb<span class="text-orange-500">lex</span>
+          Scrobb<span class="text-[#ebaf00]">lex</span>
         </h2>
 
         <p class="mb-4 font-medium">
-          <span class="text-orange-500">Plex</span> provides
+          <span class="text-[#ebaf00]">Plex</span> provides
           <a class="underline" href="https://support.plex.tv/articles/115002267687-webhooks/">webhook</a> integration
-          for all <span class="text-orange-500">Plex</span> Pass subscribers, and users of their servers. A webhook is
-          a request that the <span class="text-orange-500">Plex</span> application sends to third party services when
+          for all <span class="text-[#ebaf00]">Plex</span> Pass subscribers, and users of their servers. A webhook is
+          a request that the <span class="text-[#ebaf00]">Plex</span> application sends to third party services when
           a user takes an action, such as watching a movie or episode.
         </p>
         <p class="mb-4 font-medium">
-          You can ask <span class="text-orange-500">Plex</span> to send these webhooks to this tool, which will then
-          log those plays in your <span class="text-red-600">Trakt</span> account.
+          You can ask <span class="text-[#ebaf00]">Plex</span> to send these webhooks to this tool, which will then
+          log those plays in your <span class="text-[#9F42C7]">Trakt</span> account.
         </p>
 
         <h3 class="mt-12 mb-4 text-3xl tracking-tight font-bold text-gray-900 dark:text-white">
-          Step 1: Setup a <span class="text-red-600">Trakt</span> application
+          Step 1: Setup a <span class="text-[#9F42C7]">Trakt</span> application
         </h3>
         <p class="mb-4 font-medium">
           Go to your
-          <a class="underline decoration-red-600" href="https://trakt.tv/"><span class="text-red-600">Trakt</span></a>
+          <a class="underline decoration-red-600" href="https://trakt.tv/"><span class="text-[#9F42C7]">Trakt</span></a>
           account and click on <a class="underline" href="https://trakt.tv/oauth/applications">Your API Apps</a> and
           create a new application.
         </p>
@@ -173,21 +173,21 @@
         </dl>
         <p class="mb-4 font-medium">
           This wil give you the Client ID and Client Secret you need to provide to Scrobb<span
-            class="text-orange-500">lex</span>.
+            class="text-[#ebaf00]">lex</span>.
         </p>
 
         <% if (authorized) { %>
           <h3 class="mt-12 mb-4 text-3xl tracking-tight font-bold text-gray-900 dark:text-white">
-            Step 2: Authorize with <span class="text-red-600">Trakt</span>
+            Step 2: Authorize with <span class="text-[#9F42C7]">Trakt</span>
           </h3>
           <p class="mb-4 font-light">Nice!</p>
 
           <% } else { %>
             <h3 class="mt-12 mb-4 text-3xl tracking-tight font-bold text-gray-900 dark:text-white">
-              Step 2: Authorize with <span class="text-red-600">Trakt</span>
+              Step 2: Authorize with <span class="text-[#9F42C7]">Trakt</span>
             </h3>
             <p class="mb-4 font-medium">
-              This will take you to <span class="text-red-600">Trakt</span>, then they'll send you back here.
+              This will take you to <span class="text-[#9F42C7]">Trakt</span>, then they'll send you back here.
               <span class="font-light">(Hopefully!)</span>
             </p>
             <a class="text-white bg-orange-700 hover:bg-orange-800 focus:ring-4 focus:ring-orange-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-orange-600 dark:hover:bg-orange-700 focus:outline-none dark:focus:ring-orange-800"
@@ -195,10 +195,10 @@
             <% } %>
 
               <h3 class="mt-12 mb-4 text-3xl tracking-tight font-bold text-gray-900 dark:text-white">
-                Step 3: Configure <span class="text-orange-500">Plex</span>
+                Step 3: Configure <span class="text-[#ebaf00]">Plex</span>
               </h3>
               <p class="mb-4 font-medium">
-                In the <span class="text-orange-500">Plex</span> settings, find Webhooks. Add a webhook with the
+                In the <span class="text-[#ebaf00]">Plex</span> settings, find Webhooks. Add a webhook with the
                 following
                 link:
               </p>
