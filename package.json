@@ -1,7 +1,7 @@
 {
   "name": "scrobblex",
   "description": "Self-hosted app that enables Plex scrobbling integration with Trakt via webhooks",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "homepage": "https://github.com/ryck/scrobblex",
   "repository": {
     "type": "git",
@@ -36,10 +36,10 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/multer": "^1.4.12",
-    "@types/node": "^22.13.2",
-    "eslint": "^9.20.1",
+    "@types/node": "^22.13.5",
+    "eslint": "^9.21.0",
     "nodemon": "^3.1.9",
-    "prettier": "^3.5.0"
+    "prettier": "^3.5.2"
   },
   "husky": {
     "hooks": {
