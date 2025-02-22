@@ -75,7 +75,7 @@ This tool is not affiliated with, endorsed by, or associated with Plex Inc.
 
 This is basically a command line app, so there are no screenshots really, BUT I wanted to have at least some pretty logs:
 
-![Screenshot](https://github.com/ryck/scrobblex/blob/master/docs/screenshot.png?raw=true)
+![Screenshot](https://github.com/ryck/scrobblex/blob/main/docs/images/screenshot.png?raw=true)
 
 </details>
 
