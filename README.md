@@ -29,41 +29,45 @@
 [![latest version](https://img.shields.io/github/tag/ryck/scrobblex.svg)](https://github.com/ryck/scrobblex/releases)
 [![MIT License](https://img.shields.io/github/license/ryck/scrobblex.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Pulls from DockerHub](https://img.shields.io/docker/pulls/rickgc/scrobblex.svg)](https://hub.docker.com/r/rickgc/scrobblex)
+[![GitHub release date](https://img.shields.io/github/release-date/ryck/scrobblex)](#)
+[![GitHub last commit](https://img.shields.io/github/last-commit/ryck/scrobblex)](#)
+
 </div>
 
 <details open="open">
 <summary>Table of Contents</summary>
 
-- [About](#about)
-  - [Built With](#built-with)
-- [Getting Started](#getting-started)
+- [💡 About](#-about)
+- [🚀 Features](#-features)
+- [🐥 Getting Started](#-getting-started)
   - [Usage](#usage)
   - [Docker](#docker)
     - [Using docker run](#using-docker-run)
     - [Using compose.yml](#using-composeyml)
-- [Environment Variables](#environment-variables)
-- [Roadmap](#roadmap)
-- [Support](#support)
-  - [WebsiteFAQ](#websitefaq)
+- [📄 Environment Variables](#-environment-variables)
+- [🚧 Roadmap](#-roadmap)
+- [🛟 Support](#-support)
+  - [FAQ](#faq)
     - [How to get ypur Plex ID](#how-to-get-ypur-plex-id)
-- [Contributing](#contributing)
-- [Authors \& contributors](#authors--contributors)
-- [Security](#security)
-- [License](#license)
-- [Acknowledgements](#acknowledgements)
+- [🤝🏻 Contributing](#-contributing)
+- [👥 Authors \& contributors](#-authors--contributors)
+- [🛡️ Security](#️-security)
+- [🪪 License](#-license)
+- [❤️ Acknowledgements](#️-acknowledgements)
 
 </details>
 
 ---
 
-## About
-
+## 💡 About
 
 Scrobblex is a self-hosted nodejs app that enables Plex scrobbling integration with Trakt via webhooks. It also allows you to push your ratings to Trakt.
 
 Plex provides webhook integration for all Plex Pass subscribers, and users of their servers. A webhook is a request that the Plex application sends to third party services when a user takes an action, such as watching a movie or episode.
 
 You can ask Plex to send these webhooks to this app, which will then log those plays in your Trakt account.
+
+This tool is not affiliated with, endorsed by, or associated with Plex Inc.
 
 <details>
 <summary>Screenshots</summary>
@@ -75,13 +79,15 @@ This is basically a command line app, so there are no screenshots really, BUT I 
 
 </details>
 
-### Built With
+## 🚀 Features
 
-- NodejS
-- Express
-- TailwindCSS
+- Scrobble Plex plays to Trakt
+- Push Plex ratings to Trakt
+- Self-hosted
+- No Trakt VIP account required
 
-## Getting Started
+
+## 🐥 Getting Started
 
 You don't need a Trakt VIP account to use this app (scrobblex will take care of that), BUT you need a Plex Pass subscription in order to have access to webhooks.
 
@@ -135,7 +141,7 @@ services:
 ```
 
 
-## Environment Variables
+## 📄 Environment Variables
 
 | Variable     | Default   | Description                                             |
 | ------------ | --------- | ------------------------------------------------------- |
@@ -147,7 +153,7 @@ services:
 
 
 
-## Roadmap
+## 🚧 Roadmap
 
 See the [open issues](https://github.com/ryck/scrobblex/issues) for a list of proposed features (and known issues).
 
@@ -155,14 +161,14 @@ See the [open issues](https://github.com/ryck/scrobblex/issues) for a list of pr
 - [Top Bugs](https://github.com/ryck/scrobblex/issues?q=is%3Aissue+is%3Aopen+label%3Abug+sort%3Areactions-%2B1-desc) (Add your votes using the 👍 reaction)
 - [Newest Bugs](https://github.com/ryck/scrobblex/issues?q=is%3Aopen+is%3Aissue+label%3Abug)
 
-## Support
+## 🛟 Support
 
 Reach out to the maintainer at one of the following places:
 
 - [GitHub Discussions](https://github.com/ryck/scrobblex/discussions)
 - Contact options listed on [this GitHub profile](https://github.com/ryck)
 
-### WebsiteFAQ
+### FAQ
 #### How to get ypur Plex ID
 
 Apparently, Plex does not expose the Plex ID in the web interface anymore (it used to be on your profile page, but not anymore).
@@ -179,33 +185,33 @@ Example:
 ```
 
 
-## Contributing
+## 🤝🏻 Contributing
 
 First off, thanks for taking the time to contribute! Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make will benefit everybody else and are **greatly appreciated**.
 
 
 Please read [our contribution guidelines](docs/CONTRIBUTING.md), and thank you for being involved!
 
-## Authors & contributors
+## 👥 Authors & contributors
 
 The original setup of this repository is by [Ricardo Gonzalez](https://github.com/ryck).
 
 For a full list of all authors and contributors, see [the contributors page](https://github.com/ryck/scrobblex/contributors).
 
-## Security
+## 🛡️ Security
 
 scrobblex follows good practices of security, but 100% security cannot be assured.
 scrobblex is provided **"as is"** without any **warranty**. Use at your own risk.
 
 _For more information and to report security issues, please refer to our [security documentation](docs/SECURITY.md)._
 
-## License
+## 🪪 License
 
 This project is licensed under the **MIT license**.
 
 See [LICENSE](LICENSE) for more information.
 
-## Acknowledgements
+## ❤️ Acknowledgements
 
 [XanderStrike](https://github.com/XanderStrike) for his [goplaxt](https://github.com/XanderStrike/goplaxt) project (now sadly dicontinued). It was a great inspiration for this project. Scrobblex is basically the same thing, but in NodeJS, so kudos to him!
 
