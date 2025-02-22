@@ -23,8 +23,8 @@ export const scrobbleRequest = async ({ action, body, title }) => {
 };
 
 export const rateRequest = async ({ body, title, rating }) => {
-  if (!rating) {
-    logger.error(`❌ ${chalk.red(`No rating, aborting`)}`);
+  if (!rating || rating < 1 || rating > 10) {
+    logger.error(`❌ ${chalk.red(`Invalid rating, aborting`)}`);
     return
   }
   logger.debug(JSON.stringify(body, null, 2))
