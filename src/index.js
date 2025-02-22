@@ -51,15 +51,16 @@ app.post('/plex', upload.single('thumb'), async (req, res) => {
   const name = payload?.Account?.title
 
   if (!event || !type || !title) {
+    logger.debug(`Event: ${event} Type: ${type} Title: ${title} ID: ${id} Name: ${name}`)
     logger.error(`❌ ${chalk.red(`Missing data.`)}`);
     return;
   }
 
-  logger.debug(`❗️ Event: ${event} 🏷️ Type: ${type} 🔖 Title: ${title}`);
+  logger.debug(`🔥 Event: ${event} 🏷️ Type: ${type} 🔖 Title: ${title} 👤 ${name} (${id})`);
 
-  if (process.env.PLEX_ID) {
-    if (!process.env.PLEX_ID.split(",").includes(id.toString())) {
-      logger.error(`❌ ${chalk.red(`Account ID (${id} - ${name}) not in the list of allowed IDs: ${process.env.PLEX_ID}`)}`);
+  if (process.env.PLEX_USER) {
+    if (!process.env.PLEX_USER.split(",").includes(name)) {
+      logger.error(`❌ ${chalk.red(`User ${name} (${id}) is not in the list of allowed users: ${process.env.PLEX_USER}`)}`);
       return;
     }
   }
