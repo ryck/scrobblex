@@ -7,6 +7,7 @@ import { LocalStorage } from 'node-localstorage';
 import _ from 'lodash';
 import "express-async-errors";
 import 'dotenv/config';
+import RateLimit from 'express-rate-limit';
 
 import { logger } from './logger.js';
 import { handle } from './utils.js';
@@ -18,6 +19,11 @@ const PORT = process.env.PORT || 3090;
 const upload = multer({ storage: multer.memoryStorage() });
 
 const localStorage = new LocalStorage('./data');
+
+const authorizeLimiter = RateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // max 100 requests per windowMs
+});
 
 function errorHandler(err, req, res, next) {
   console.error(err.stack);
@@ -92,7 +98,7 @@ app.get('/', async (req, res) => {
   });
 });
 
-app.get('/authorize', async (req, res) => {
+app.get('/authorize', authorizeLimiter, async (req, res) => {
   const code = req.query.code;
   const redirect_uri = `${req.protocol}://${req.get('host')}/authorize`;
   const tokens = await authorizeRequest({ code, grant_type: 'authorization_code', redirect_uri });
