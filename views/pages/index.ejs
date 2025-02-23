@@ -27,59 +27,78 @@
   <meta name="msapplication-square310x310logo" content="/mstile-310x310.png" />
 
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
   <script defer>
-    // INITIALIZATION OF CLIPBOARD
-    // =======================================================
     (function () {
       window.addEventListener('load', () => {
-        const $clipboards = document.querySelectorAll('.js-clipboard-example');
+        const $clipboards = document.querySelectorAll('.js-clipboard');
         $clipboards.forEach((el) => {
-          const isToggleTooltip = false
-          const clipboard = new ClipboardJS(el, {
-            text: (trigger) => {
-              const clipboardText = trigger.dataset.clipboardText;
+          el.addEventListener('click', async () => {
+            const clipboardTarget = el.dataset.clipboardTarget;
+            const $element = document.querySelector(clipboardTarget);
+            let textToCopy = '';
 
-              if (clipboardText) return clipboardText;
-
-              const clipboardTarget = trigger.dataset.clipboardTarget;
-              const $element = document.querySelector(clipboardTarget);
-
+            if ($element) {
               if (
                 $element.tagName === 'SELECT' ||
                 $element.tagName === 'INPUT' ||
                 $element.tagName === 'TEXTAREA'
-              ) return $element.value
-              else return $element.textContent;
-            }
-          });
-          clipboard.on('success', () => {
-            const $default = el.querySelector('.js-clipboard-default');
-            const $success = el.querySelector('.js-clipboard-success');
-            const $successText = el.querySelector('.js-clipboard-success-text');
-            const successText = el.dataset.clipboardSuccessText || '';
-            let oldSuccessText;
-
-            if ($successText) {
-              oldSuccessText = $successText.textContent
-              $successText.textContent = successText
-            }
-            if ($default && $success) {
-              $default.style.display = 'none'
-              $success.style.display = 'block'
-            }
-
-            setTimeout(function () {
-              if ($successText && oldSuccessText) $successText.textContent = oldSuccessText;
-              if ($default && $success) {
-                $success.style.display = '';
-                $default.style.display = '';
+              ) {
+                textToCopy = $element.value;
+              } else {
+                textToCopy = $element.textContent;
               }
-            }, 800);
+            }
+
+            if (navigator.clipboard) {
+              try {
+                await navigator.clipboard.writeText(textToCopy);
+                showSuccess(el);
+              } catch (err) {
+                console.error('Failed to copy text: ', err);
+              }
+            } else {
+              // Fallback for older browsers
+              const textarea = document.createElement('textarea');
+              textarea.value = textToCopy;
+              document.body.appendChild(textarea);
+              textarea.select();
+              try {
+                document.execCommand('copy');
+                showSuccess(el);
+              } catch (err) {
+                console.error('Fallback: Oops, unable to copy', err);
+              }
+              document.body.removeChild(textarea);
+            }
           });
         });
-      })
-    })()
+
+        function showSuccess(el) {
+          const $default = el.querySelector('.js-clipboard-default');
+          const $success = el.querySelector('.js-clipboard-success');
+          const $successText = el.querySelector('.js-clipboard-success-text');
+          const successText = el.dataset.clipboardSuccessText || '';
+          let oldSuccessText;
+
+          if ($successText) {
+            oldSuccessText = $successText.textContent;
+            $successText.textContent = successText;
+          }
+          if ($default && $success) {
+            $default.style.display = 'none';
+            $success.style.display = 'block';
+          }
+
+          setTimeout(function () {
+            if ($successText && oldSuccessText) $successText.textContent = oldSuccessText;
+            if ($default && $success) {
+              $success.style.display = '';
+              $default.style.display = '';
+            }
+          }, 800);
+        }
+      });
+    })();
   </script>
   <title>Scrobblex</title>
 </head>
@@ -109,7 +128,7 @@
         </h3>
         <p class="mb-4 font-medium">
           Go to your
-          <a class="underline decoration-red-600" href="https://trakt.tv/"><span class="text-[#9F42C7]">Trakt</span></a>
+          <a class="underline" href="https://trakt.tv/"><span class="text-[#9F42C7]">Trakt</span></a>
           account and click on <a class="underline" href="https://trakt.tv/oauth/applications">Your API Apps</a> and
           create a new application.
         </p>
@@ -128,7 +147,7 @@
                 </div>
 
                 <button type="button"
-                  class="js-clipboard-example p-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800"
+                  class="js-clipboard p-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800"
                   data-clipboard-target="#url-authorize" data-clipboard-action="copy"
                   data-clipboard-success-text="Copied">
                   <svg class="js-clipboard-default size-4 group-hover:rotate-6 transition"
@@ -198,7 +217,9 @@
                 Step 3: Configure <span class="text-[#ebaf00]">Plex</span>
               </h3>
               <p class="mb-4 font-medium">
-                In the <span class="text-[#ebaf00]">Plex</span> settings, find Webhooks. Add a webhook with the
+                In <span class="text-[#ebaf00]">Plex</span> settings, find the <a class="underline"
+                  href="https://app.plex.tv/desktop/#!/settings/webhooks" target="_blank">Webhooks</a> section. Add a
+                webhook with the
                 following
                 link:
               </p>
@@ -208,7 +229,7 @@
                 </div>
 
                 <button type="button"
-                  class="js-clipboard-example p-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800"
+                  class="js-clipboard p-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800"
                   data-clipboard-target="#url-api" data-clipboard-action="copy" data-clipboard-success-text="Copied">
                   <svg class="js-clipboard-default size-4 group-hover:rotate-6 transition"
                     xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -226,10 +247,11 @@
               </div>
 
               <h3 class="mt-12 mb-4 text-3xl tracking-tight font-bold text-gray-900 dark:text-white">Step 4: Enjoy</h3>
-              <p class="mb-4 font-medium">You're done! Any device, any server, your plays will be logged.</p>
+              <p class="mb-4 font-medium">You're done!</p>
 
               <h3 class="mt-12 mb-4 text-3xl tracking-tight font-bold text-gray-900 dark:text-white">More info</h3>
-              <p class="mb-4 font-medium">Please check the <a href="https://github.com/ryck/scrobblex">github repo</a>
+              <p class="mb-4 font-medium">Please check the <a class="underline"
+                  href="https://github.com/ryck/scrobblex">github repo</a>
               </p>
       </div>
     </div>
