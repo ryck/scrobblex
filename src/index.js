@@ -1,3 +1,5 @@
+// https://support.plex.tv/hc/en-us/articles/115002267687-Webhooks
+
 import 'dotenv/config'
 import express from 'express';
 import cors from 'cors';
@@ -132,3 +134,6 @@ app.listen(PORT, (error) => {
     logger.error(`❌ ${chalk.red(`Error occurred: ${error.message}`)}`);
   }
 });
+
+
+['SIGHUP', 'SIGINT', 'SIGTERM'].forEach((signal) => process.on(signal, () => process.exit()));
