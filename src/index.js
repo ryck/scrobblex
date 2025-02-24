@@ -33,6 +33,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(errorHandler)
+app.use(express.static('static'))
 app.use('/favicon.ico', express.static('favicon.ico'));
 app.set('view engine', 'ejs');
 
