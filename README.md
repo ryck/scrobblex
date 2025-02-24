@@ -12,7 +12,8 @@
   <a href="https://github.com/ryck/scrobblex/issues/new?assignees=&labels=bug&template=01_BUG_REPORT.md&title=bug%3A+">Report a Bug</a>
   ·
   <a href="https://github.com/ryck/scrobblex/issues/new?assignees=&labels=enhancement&template=02_FEATURE_REQUEST.md&title=feat%3A+">Request a Feature</a>
-  .<a href="https://github.com/ryck/scrobblex/discussions">Ask a Question</a>
+  · 
+  <a href="https://github.com/ryck/scrobblex/discussions">Ask a Question</a>
 </div>
 
 <div align="center">
@@ -48,7 +49,7 @@
 - [🚧 Roadmap](#-roadmap)
 - [🛟 Support](#-support)
   - [FAQ](#faq)
-    - [How to get ypur Plex ID](#how-to-get-ypur-plex-id)
+    - [How to get your Plex user](#how-to-get-your-plex-user)
 - [🤝🏻 Contributing](#-contributing)
 - [👥 Authors \& contributors](#-authors--contributors)
 - [🛡️ Security](#️-security)
@@ -75,7 +76,7 @@ This tool is not affiliated with, endorsed by, or associated with Plex Inc.
 
 This is basically a command line app, so there are no screenshots really, BUT I wanted to have at least some pretty logs:
 
-![Screenshot](https://github.com/ryck/scrobblex/blob/master/docs/screenshot.png?raw=true)
+![Screenshot](https://github.com/ryck/scrobblex/blob/main/docs/images/screenshot.png?raw=true)
 
 </details>
 
@@ -143,13 +144,13 @@ services:
 
 ## 📄 Environment Variables
 
-| Variable     | Default   | Description                                             |
-| ------------ | --------- | ------------------------------------------------------- |
-| TRAKT_ID     | undefined | Trakt application ID                                    |
-| TRAKT_SECRET | undefined | Trakt application secret                                |
-| PLEX_ID      | undefined | Plex ID (if you only want to scrobble for certain user) |
-| PORT         | 3090      | Exposed express port                                    |
-| LOG_LEVEL    | info      | winston log level: ie: info, debug                      |
+| Variable     | Default   | Description                                                              |
+| ------------ | --------- | ------------------------------------------------------------------------ |
+| TRAKT_ID     | undefined | Trakt application ID                                                     |
+| TRAKT_SECRET | undefined | Trakt application secret                                                 |
+| PLEX_USER    | undefined | Plex username (comma separated list if you want to allow multiple users) |
+| PORT         | 3090      | Exposed express port                                                     |
+| LOG_LEVEL    | info      | winston log level: ie: info, debug                                       |
 
 
 
@@ -169,20 +170,11 @@ Reach out to the maintainer at one of the following places:
 - Contact options listed on [this GitHub profile](https://github.com/ryck)
 
 ### FAQ
-#### How to get ypur Plex ID
+#### How to get your Plex user
 
-Apparently, Plex does not expose the Plex ID in the web interface anymore (it used to be on your profile page, but not anymore).
+You can find your plex user (don't confuse it with your Plex ID) by going to the [Plex website](https://www.plex.tv) and logging in. Your username will be in the top right corner.
 
-To get your Plex ID:
-1. Go to Payments on the [Plex website](https://clients.plex.tv/users/payments)
-2. Using dev tools on your browser, look for `name="plex-user-id"` in the HTML
-3. The `content` attribute of that tag is your Plex ID
-
-Example:
-
-```html
-<meta name="plex-user-id" content="123456789">
-```
+Alternatively, you can find it by going to your [account settings](https://app.plex.tv/desktop/#!/settings/account). Your username will be below your profile picture.
 
 
 ## 🤝🏻 Contributing
@@ -215,4 +207,4 @@ See [LICENSE](LICENSE) for more information.
 
 [XanderStrike](https://github.com/XanderStrike) for his [goplaxt](https://github.com/XanderStrike/goplaxt) project (now sadly dicontinued). It was a great inspiration for this project. Scrobblex is basically the same thing, but in NodeJS, so kudos to him!
 
-If you want something more powerful, (or something that doesn't need a plexx pass), check [PlexTraktSync](https://github.com/Taxel/PlexTraktSync), it's an awesome project.
+If you want something more powerful, (or something that doesn't need a plex pass), check [PlexTraktSync](https://github.com/Taxel/PlexTraktSync), it's an awesome project that will allow you to sync your watched media, your ratings, your lists, etc. from Plex to Trakt.
