@@ -9,6 +9,9 @@ on:
 jobs:
   stale:
     name: 🧹 Clean up stale issues and PRs
+    permissions:
+      contents: read
+      pull-requests: write    
     runs-on: ubuntu-latest
     steps:
       - name: 🚀 Run stale

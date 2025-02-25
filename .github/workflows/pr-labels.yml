@@ -9,6 +9,9 @@ jobs:
   pr_labels:
     name: 🏭 Verify
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write        
     steps:
       - name: 🏷 Verify PR has a valid label
         uses: jesusvasquez333/verify-pr-label-action@v1.4.0

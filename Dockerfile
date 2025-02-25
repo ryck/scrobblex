@@ -1,10 +1,10 @@
 FROM node:lts-alpine
 
-LABEL org.opencontainers.image.title "Scrobblex"
-LABEL org.opencontainers.image.description "Self-hosted app that enables Plex scrobbling integration with Trakt via webhooks"
-LABEL org.opencontainers.image.url "https://github.com/ryck/scrobblex"
-LABEL org.opencontainers.image.source 'https://github.com/ryck/scrobblex'
-LABEL org.opencontainers.image.licenses 'MIT'
+LABEL org.opencontainers.image.title="Scrobblex"
+LABEL org.opencontainers.image.description="Self-hosted app that enables Plex scrobbling integration with Trakt via webhooks"
+LABEL org.opencontainers.image.url="https://github.com/ryck/scrobblex"
+LABEL org.opencontainers.image.source="https://github.com/ryck/scrobblex"
+LABEL org.opencontainers.image.licenses="MIT"
 
 ENV NODE_ENV=production
 ENV PORT=3090
@@ -20,7 +20,7 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm ci --only=production && npm cache clean --force
+RUN npm ci --omit=dev
 
 COPY . .
 
