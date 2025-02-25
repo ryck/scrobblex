@@ -3,7 +3,7 @@ import { formatDistanceToNow } from 'date-fns';
 
 import { logger } from './logger.js';
 import { api } from './api.js';
-import { GetGuid } from './utils.js';
+import { GetGuids } from './utils.js';
 
 export const scrobbleRequest = async ({ action, body, title }) => {
   try {
@@ -40,96 +40,96 @@ export const rateRequest = async ({ body, title, rating }) => {
 
 
 export const findMovieRequest = async (payload) => {
-  const { service, id } = GetGuid({ payload })
+  const guids = GetGuids({ payload });
 
-  if (service && id) {
-    logger.info(`🔍 Finding movie info for ${payload.Metadata.title} (${payload.Metadata.year}) using ${service}://${id}`);
+  for (const { service, id } of guids) {
+    if (service && id) {
+      logger.info(`🔍 Finding movie info for ${payload.Metadata.title} (${payload.Metadata.year}) using ${service}://${id}`);
 
-  } else {
-    logger.error(`❌ ${chalk.red(`No GUID available`)}`);
-    return
-  }
-
-  try {
-    const response = await api.get(`https://api.trakt.tv/search/${service}/${id}?type=movie`, { ttl: 1000 * 60 * 180 });
-    if (!response.data.length) {
-      logger.error(`❌ ${chalk.red(`Response was empty!`)}`);
-      return
+      try {
+        const response = await api.get(`https://api.trakt.tv/search/${service}/${id}?type=movie`, { ttl: 1000 * 60 * 180 });
+        logger.debug(JSON.stringify(response.data, null, 2));
+        if (response.data.length) {
+          const movie = response.data[0].movie;
+          const { title, year } = movie;
+          logger.info(`🎬 Movie found: ${title} (${year})`);
+          return movie;
+        } else {
+          logger.error(`❌ ${chalk.red(`Response from ${service} was empty!`)}`);
+        }
+      } catch (err) {
+        logger.error(`❌ ${chalk.red(`Search movie API error: ${err.message}`)}`);
+      }
+    } else {
+      logger.error(`❌ ${chalk.red(`No GUID available`)}`);
     }
-    const movie = response.data[0].movie;
-    const { title, year } = movie;
-    logger.info(`🎬 Movie found: ${title} (${year})`);
-
-    return movie;
-  } catch (err) {
-    // Error handling here
-    logger.error(`❌ ${chalk.red(`Search movie API error: ${err.message}`)}`);
   }
+
+  logger.error(`❌ ${chalk.red(`No movie found for any GUIDs`)}`);
+  return null;
 };
 
 export const findEpisodeRequest = async (payload) => {
-  const { service, id } = GetGuid({ payload })
+  const guids = GetGuids({ payload });
 
-  if (service && id) {
-    logger.info(
-      `🔍 Finding episode info for ${payload.Metadata.grandparentTitle} (${payload.Metadata.year}) - ${payload.Metadata.parentTitle} - ${payload.Metadata.title} using ${service}://${id}`,
-    );
-  } else {
-    logger.error(`❌ ${chalk.red(`No GUID available`)}`);
-    return
-  }
-
-  try {
-    const response = await api.get(`/search/${service}/${id}?type=episode`, { ttl: 1000 * 60 * 180 });
-    logger.debug(`/search/${service}/${id}?type=episode`)
-    logger.debug(JSON.stringify(response.data, null, 2));
-    if (!response.data.length) {
-      logger.error(`❌ ${chalk.red(`Response was empty!`)}`);
-      return
+  for (const { service, id } of guids) {
+    if (service && id) {
+      logger.info(
+        `🔍 Finding episode info for ${payload.Metadata.grandparentTitle} (${payload.Metadata.year}) - ${payload.Metadata.parentTitle} - ${payload.Metadata.title} using ${service}://${id}`,
+      )
+      try {
+        const response = await api.get(`https://api.trakt.tv/search/${service}/${id}?type=episode`, { ttl: 1000 * 60 * 180 });
+        logger.debug(JSON.stringify(response.data, null, 2));
+        if (response.data.length) {
+          const episode = response.data[0].episode;
+          const { title, season, number } = episode;
+          logger.info(`📺 Episode found: ${title} (Season ${season}, Episode ${number})`);
+          return episode;
+        } else {
+          logger.error(`❌ ${chalk.red(`Response from ${service} was empty!`)}`);
+        }
+      } catch (err) {
+        logger.error(`❌ ${chalk.red(`Search episode API error: ${err.message}`)}`);
+      }
+    } else {
+      logger.error(`❌ ${chalk.red(`No GUID available`)}`);
     }
-    const { episode, show } = response.data[0];
-    logger.info(
-      `📺 Episode found: ${show.title} (${show.year}) - S${episode.season.toString().padStart(2, '0')}E${episode.number.toString().padStart(2, '0')} - ${episode.title}`,
-    );
-    return episode;
-  } catch (err) {
-    logger.error(`❌ ${chalk.red(`Search episode API error: ${err.message}`)}`);
   }
+
+  logger.error(`❌ ${chalk.red(`No episode found for any GUIDs`)}`);
+  return null;
 };
 
 
 export const findShowRequest = async (payload) => {
-  const { service, id } = GetGuid({ payload })
+  const guids = GetGuids({ payload });
 
-  if (service && id) {
-    logger.info(
-      `🔍 Finding show info for ${payload.Metadata.title} (${payload.Metadata.year}) using ${service}://${id}`,
-    );
+  for (const { service, id } of guids) {
+    if (service && id) {
+      logger.info(`🔍 Finding show info for ${payload.Metadata.title} (${payload.Metadata.year}) using ${service}://${id}`);
 
-  } else {
-    logger.error(`❌ ${chalk.red(`No GUID available`)}`);
-    return
-  }
-
-  try {
-    const response = await api.get(`/search/${service}/${id}?type=show`, { ttl: 1000 * 60 * 180 });
-    logger.debug(JSON.stringify(payload, null, 2));
-    logger.debug(JSON.stringify(response.data, null, 2));
-    if (!response.data.length) {
-      logger.error(`❌ ${chalk.red(`Response was empty!`)}`);
-      return
+      try {
+        const response = await api.get(`https://api.trakt.tv/search/${service}/${id}?type=show`, { ttl: 1000 * 60 * 180 });
+        logger.debug(JSON.stringify(response.data, null, 2));
+        if (response.data.length) {
+          const show = response.data[0].show;
+          const { title, year } = show;
+          logger.info(`📺 Show found: ${title} (${year})`);
+          return show;
+        } else {
+          logger.error(`❌ ${chalk.red(`Response from ${service} was empty!`)}`);
+        }
+      } catch (err) {
+        logger.error(`❌ ${chalk.red(`Search show API error: ${err.message}`)}`);
+      }
+    } else {
+      logger.error(`❌ ${chalk.red(`No GUID available`)}`);
     }
-    const { show } = response.data[0];
-    // logger.debug(JSON.stringify(show, null, 2));
-    logger.info(
-      `📺 Show found: ${show.title} (${show.year})`,
-    );
-    return show;
-  } catch (err) {
-    logger.error(`❌ ${chalk.red(`Search show API error: ${err.message}`)}`);
   }
-};
 
+  logger.error(`❌ ${chalk.red(`No show found for any GUIDs`)}`);
+  return null;
+};
 
 export const findSeasonRequest = async (payload) => {
   logger.info(

@@ -216,7 +216,7 @@ export const handleRatingMovie = async ({ payload }) => {
   rateRequest({ body, title, rating });
 };
 
-export const GetGuid = ({ payload }) => {
+export const GetGuids = ({ payload }) => {
   const Guid = payload?.Metadata?.Guid;
 
   if (!Guid) {
@@ -224,10 +224,13 @@ export const GetGuid = ({ payload }) => {
     return;
   }
 
-  const service = Guid[0]?.id?.substring(0, 4)
-  const id = Guid[0]?.id?.substring(7)
+  const guids = Guid.map(guid => {
+    const service = guid?.id?.substring(0, 4);
+    const id = guid?.id?.substring(7);
+    return { service, id };
+  });
 
-  logger.debug(`service: ${service} | id: ${id}`);
+  logger.debug(`services and ids: ${JSON.stringify(guids)}`);
 
-  return { service, id }
+  return guids;
 }
