@@ -55,7 +55,7 @@ export const findMovieRequest = async (payload) => {
           logger.info(`🎬 Movie found: ${title} (${year})`);
           return movie;
         } else {
-          logger.error(`❌ ${chalk.red(`Response from ${service} was empty!`)}`);
+          logger.error(`❌ ${chalk.red(`Response from ${service.toUpperCase()} was empty!`)}`);
         }
       } catch (err) {
         logger.error(`❌ ${chalk.red(`Search movie API error: ${err.message}`)}`);
@@ -75,18 +75,19 @@ export const findEpisodeRequest = async (payload) => {
   for (const { service, id } of guids) {
     if (service && id) {
       logger.info(
-        `🔍 Finding episode info for ${payload.Metadata.grandparentTitle} (${payload.Metadata.year}) - ${payload.Metadata.parentTitle} - ${payload.Metadata.title} using ${service}://${id}`,
+        `🔍 Finding episode info for ${payload.Metadata.grandparentTitle} - S${String(payload.Metadata.parentIndex).padStart(2, '0')}E${String(payload.Metadata.index).padStart(2, '0')} - ${payload.Metadata.title} using ${service}://${id}`,
       )
       try {
         const response = await api.get(`https://api.trakt.tv/search/${service}/${id}?type=episode`, { ttl: 1000 * 60 * 180 });
         logger.debug(JSON.stringify(response.data, null, 2));
         if (response.data.length) {
-          const episode = response.data[0].episode;
+          const { episode, show } = response.data[0];
           const { title, season, number } = episode;
-          logger.info(`📺 Episode found: ${title} (Season ${season}, Episode ${number})`);
+          const { title: showTitle, year } = show;
+          logger.info(`📺 Episode found: ${showTitle} (${year}) - S${String(season).padStart(2, '0')}E${String(number).padStart(2, '0')} - ${title}`);
           return episode;
         } else {
-          logger.error(`❌ ${chalk.red(`Response from ${service} was empty!`)}`);
+          logger.error(`❌ ${chalk.red(`Response from ${service.toUpperCase()} was empty!`)}`);
         }
       } catch (err) {
         logger.error(`❌ ${chalk.red(`Search episode API error: ${err.message}`)}`);
@@ -117,7 +118,7 @@ export const findShowRequest = async (payload) => {
           logger.info(`📺 Show found: ${title} (${year})`);
           return show;
         } else {
-          logger.error(`❌ ${chalk.red(`Response from ${service} was empty!`)}`);
+          logger.error(`❌ ${chalk.red(`Response from ${service.toUpperCase()} was empty!`)}`);
         }
       } catch (err) {
         logger.error(`❌ ${chalk.red(`Search show API error: ${err.message}`)}`);

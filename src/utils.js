@@ -39,8 +39,9 @@ export const getAction = ({ event, viewOffset, duration }) => {
 };
 
 export const handle = ({ payload }) => {
-  const scrobblingEvents = ['media.scrobble'];
-  // const scrobblingEvents = ['media.play', 'media.pause', 'media.resume', 'media.stop', 'media.scrobble'];
+  const scrobblingEvents = process.env.LOG_LEVEL === 'debug'
+    ? ['media.play', 'media.pause', 'media.resume', 'media.scrobble']
+    : ['media.scrobble'];
   const ratingEvents = ['media.rate']
   const { type } = payload.Metadata;
   if (![...scrobblingEvents, ...ratingEvents].includes(payload.event)) {

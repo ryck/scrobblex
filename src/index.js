@@ -61,14 +61,14 @@ app.post('/plex', upload.single('thumb'), async (req, res) => {
 
   if (!event || !type || !title) {
     logger.debug(`Event: ${event} Type: ${type} Title: ${title} ID: ${id} Name: ${name}`)
-    logger.error(`❌ ${chalk.red(`Missing data.`)}`);
+    logger.error(`❌ ${chalk.red(`Missing required data.`)}`);
     return;
   }
 
   logger.debug(`🔥 Event: ${event} 🏷️ Type: ${type} 🔖 Title: ${title} 👤 ${name} (${id})`);
 
   if (process.env.PLEX_USER) {
-    if (!process.env.PLEX_USER.split(",").includes(name)) {
+    if (!process.env.PLEX_USER.trim().toLowerCase().split(",").includes(name.trim().toLowerCase())) {
       logger.error(`❌ ${chalk.red(`User ${name} (${id}) is not in the list of allowed users: ${process.env.PLEX_USER}`)}`);
       return;
     }
