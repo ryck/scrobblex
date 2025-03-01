@@ -137,8 +137,8 @@ export const handleRatingShow = async ({ payload }) => {
   const body = {
     "shows": [
       {
-        ...show,
         "rating": rating,
+        ...show,
       }
     ]
   };
@@ -186,8 +186,8 @@ export const handleRatingEpisode = async ({ payload }) => {
   const body = {
     "episodes": [
       {
-        ...episode,
         "rating": rating,
+        ...episode,
       }
     ]
   };
@@ -208,8 +208,8 @@ export const handleRatingMovie = async ({ payload }) => {
   const body = {
     "movies": [
       {
-        ...movie,
         "rating": rating,
+        ...movie,
       }
     ]
   };
