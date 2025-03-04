@@ -9,6 +9,7 @@ import { LocalStorage } from 'node-localstorage';
 import _ from 'lodash';
 import "express-async-errors";
 import RateLimit from 'express-rate-limit';
+import os from 'os';
 
 import { logger } from './logger.js';
 import { handle } from './utils.js';
@@ -41,6 +42,18 @@ app.use('/favicon.ico', express.static('favicon.ico'));
 app.set('view engine', 'ejs');
 
 const orange = chalk.rgb(235, 175, 0);
+
+const getLocalIpAddress = () => {
+  const interfaces = os.networkInterfaces();
+  for (const name of Object.keys(interfaces)) {
+    for (const iface of interfaces[name]) {
+      if (iface.family === 'IPv4' && !iface.internal) {
+        return iface.address;
+      }
+    }
+  }
+  return 'localhost';
+};
 
 app.post('/plex', upload.single('thumb'), async (req, res) => {
   if (!req.body.payload) {
@@ -130,13 +143,15 @@ app.get('/authorize', authorizeLimiter, async (req, res) => {
 
 app.listen(PORT, (error) => {
   if (!error) {
+    const localIp = getLocalIpAddress();
+
     logger.info(`🤖 Scrobb${orange('lex')} v${process.env.npm_package_version}`);
-    logger.info(`🚀 Connected successfully on http://localhost:${PORT}`);
+    logger.info(`🚀 Connected successfully on http://${localIp}:${PORT}`);
 
     const tokens = localStorage.getItem('tokens');
     if (!tokens || tokens == 'undefined') {
       logger.error(`❌ ${chalk.red(`Error getting token.`)}`);
-      logger.warn(`🛟 You need to authorize the app. Please go to http://localhost:${PORT} and follow the instructions.`);
+      logger.warn(`🛟 You need to authorize the app. Please go to http://${localIp}:${PORT} and follow the instructions.`);
     }
   } else {
     logger.error(`❌ ${chalk.red(`Error occurred: ${error.message}`)}`);
