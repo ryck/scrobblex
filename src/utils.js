@@ -95,7 +95,7 @@ export const handlePlayingMovie = async ({ payload }) => {
     return;
   }
   const body = { movie, progress };
-  const title = `🎬 ${payload.Metadata.title}`;
+  const title = `🎬 ${payload.Metadata.title} (${payload.Metadata.year})`;
   await scrobbleRequest({ action, body, title });
 };
 
@@ -109,7 +109,7 @@ export const handlePlayingShow = async ({ payload }) => {
     return;
   }
   const body = { episode, progress };
-  const title = `📺 ${payload.Metadata.title}`;
+  const title = `📺 ${payload.Metadata.grandparentTitle} (${payload.Metadata.year}) - S${String(payload.Metadata.parentIndex).padStart(2, '0')}E${String(payload.Metadata.index).padStart(2, '0')} - ${payload.Metadata.title}`;
   await scrobbleRequest({ action, body, title });
 };
 
@@ -169,7 +169,7 @@ export const handleRatingMovie = async ({ payload }) => {
     return;
   }
   const body = { movies: [{ rating, ...movie }] };
-  const title = `📺 ${payload.Metadata.title} (${payload.Metadata.year})`;
+  const title = `🎬 ${payload.Metadata.title} (${payload.Metadata.year})`;
   await rateRequest({ body, title, rating });
 };
 

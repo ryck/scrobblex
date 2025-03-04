@@ -136,7 +136,7 @@ app.listen(PORT, (error) => {
     const tokens = localStorage.getItem('tokens');
     if (!tokens || tokens == 'undefined') {
       logger.error(`❌ ${chalk.red(`Error getting token.`)}`);
-      logger.warn(`⚠️ You need to authorize the app. Please go to http://localhost:${PORT} and follow the instructions.`);
+      logger.warn(`🛟 You need to authorize the app. Please go to http://localhost:${PORT} and follow the instructions.`);
     }
   } else {
     logger.error(`❌ ${chalk.red(`Error occurred: ${error.message}`)}`);
