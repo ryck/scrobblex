@@ -108,7 +108,7 @@ Scrobblex is designed to be run in Docker. You can host it right on your Plex se
 
 To run it yourself, first create an API application through Trakt [here](https://trakt.tv/oauth/applications). Set the Allowed Hostnames to be the URI you will hit to access Scrobblex, plus /authorize. So if you're exposing your server at http://10.20.30.40:3090, you'll set it to http://10.20.30.40:3090/authorize. Bare IP addresses and ports are totally fine, but keep in mind your Scrobblex instance _must_ be accessible to _all_ the Plex servers you intend to play media from.
 
-Again, once Scrobblex is running, just go to http://$YOUR_IP:$PORT/ (ie: http://10.20.30.40:3090/) and a web page will guide you to get your token.
+Again, once Scrobblex is running, just go to http://$YOUR_IP:$PORT/ (ie: http://127.0.0.1:3090/) and a web page will guide you to get your token.
 
 #### Using docker run
 
@@ -136,7 +136,6 @@ services:
     environment:
       - TRAKT_ID=YOUR_TRAKT_ID
       - TRAKT_SECRET=YOUR_TRAKT_SECRET
-      - LOG_LEVEL=info
     volumes:
       - ./scrobblex:/app/data
 ```
@@ -144,13 +143,13 @@ services:
 
 ## 📄 Environment Variables
 
-| Variable     | Default   | Description                                                              |
-| ------------ | --------- | ------------------------------------------------------------------------ |
-| TRAKT_ID     | undefined | Trakt application ID                                                     |
-| TRAKT_SECRET | undefined | Trakt application secret                                                 |
-| PLEX_USER    | undefined | Plex username (comma separated list if you want to allow multiple users) |
-| PORT         | 3090      | Exposed express port                                                     |
-| LOG_LEVEL    | info      | winston log level: ie: info, debug                                       |
+| Variable     | Default   | Required | Description                                                              |
+| ------------ | --------- | -------- | ------------------------------------------------------------------------ |
+| TRAKT_ID     | undefined | Yes      | Trakt application ID                                                     |
+| TRAKT_SECRET | undefined | Yes      | Trakt application secret                                                 |
+| PLEX_USER    | undefined | No       | Plex username (comma separated list if you want to allow multiple users) |
+| PORT         | 3090      | No       | Exposed express port                                                     |
+| LOG_LEVEL    | info      | No       | winston log level: ie: info, debug                                       |
 
 
 
