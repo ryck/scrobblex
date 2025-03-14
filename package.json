@@ -1,7 +1,7 @@
 {
   "name": "scrobblex",
   "description": "Self-hosted app that enables Plex scrobbling integration with Trakt via webhooks",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "homepage": "https://github.com/ryck/scrobblex",
   "repository": {
     "type": "git",
@@ -27,6 +27,7 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
+    "css": "npx @tailwindcss/cli -i ./views/pages/input.css -o ./static/output.css --watch",
     "lint": "eslint src/**/*.js",
     "format": "eslint src/**/*.js --fix",
     "pretty": "prettier --write \"src/**/*.js\""
@@ -62,7 +63,7 @@
     "lodash": "^4.17.21",
     "multer": "^1.4.5-lts.1",
     "node-localstorage": "^3.0.5",
-    "tailwindcss": "^4.0.8",
+    "tailwindcss": "^4.0.12",
     "winston": "^3.17.0"
   }
 }
