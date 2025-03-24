@@ -35,16 +35,16 @@
   "devDependencies": {
     "@types/body-parser": "^1.19.5",
     "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.0",
+    "@types/express": "^5.0.1",
     "@types/multer": "^1.4.12",
-    "@types/node": "^22.13.10",
-    "eslint": "^9.22.0",
+    "@types/node": "^22.13.13",
+    "eslint": "^9.23.0",
     "nodemon": "^3.1.9",
     "prettier": "^3.5.3"
   },
   "dependencies": {
-    "@tailwindcss/cli": "^4.0.14",
-    "axios": "^1.8.3",
+    "@tailwindcss/cli": "^4.0.15",
+    "axios": "^1.8.4",
     "axios-cache-interceptor": "^1.7.0",
     "chalk": "^5.4.1",
     "cors": "^2.8.5",
@@ -55,9 +55,9 @@
     "express-async-errors": "^3.1.1",
     "express-rate-limit": "^7.5.0",
     "lodash": "^4.17.21",
-    "multer": "^1.4.5-lts.1",
+    "multer": "^1.4.5-lts.2",
     "node-localstorage": "^3.0.5",
-    "tailwindcss": "^4.0.14",
+    "tailwindcss": "^4.0.15",
     "winston": "^3.17.0"
   }
 }
