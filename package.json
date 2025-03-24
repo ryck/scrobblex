@@ -50,7 +50,7 @@
   },
   "dependencies": {
     "@tailwindcss/cli": "^4.0.8",
-    "axios": "^1.7.9",
+    "axios": "^1.8.4",
     "axios-cache-interceptor": "^1.6.2",
     "chalk": "^5.4.1",
     "cors": "^2.8.5",
