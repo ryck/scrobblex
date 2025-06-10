@@ -7,7 +7,6 @@ import multer from 'multer';
 import chalk from 'chalk';
 import { LocalStorage } from 'node-localstorage';
 import _ from 'lodash';
-import "express-async-errors";
 import RateLimit from 'express-rate-limit';
 import os from 'os';
 
