@@ -187,3 +187,12 @@ export const GetGuids = ({ payload }) => {
   logger.debug(`services and ids: ${JSON.stringify(guids)}`);
   return guids;
 };
+
+export const convertTraktIdsToGuids = (ids) => {
+  const result = [];
+  // Only convert the IDs we care about and that exist
+  if (ids.imdb) result.push({ service: 'imdb', id: ids.imdb.toString() });
+  if (ids.tmdb) result.push({ service: 'tmdb', id: ids.tmdb.toString() });
+  if (ids.tvdb) result.push({ service: 'tvdb', id: ids.tvdb.toString() });
+  return result;
+};

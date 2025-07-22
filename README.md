@@ -92,6 +92,8 @@ This is basically a command line app, so there are no screenshots really, BUT I 
 
 You don't need a Trakt VIP account to use this app (scrobblex will take care of that), BUT you need a Plex Pass subscription in order to have access to webhooks.
 
+If you don't have a Plex Pass is also possible to use Tautulli notifications instead (see FAQ)
+
 ### Usage
 
 ```bash
@@ -186,6 +188,52 @@ You can find your plex user (don't confuse it with your Plex ID) by going to the
 
 Alternatively, you can find it by going to your [account settings](https://app.plex.tv/desktop/#!/settings/account). Your username will be below your profile picture.
 
+### How to use Tautulli
+
+1. Install [Tautulli](https://tautulli.com/) (if you don't have it already!)
+2. Open Tautulli Settings
+3. Open "Notification Agents"
+4. In "Configuration" tab 
+  -  Webhook URL: scrobblex URL (ie, `http://127.0.0.1:3090/plex`)
+  -  Webhook Method: `Post`
+  -  Description: `Scrobblex` 
+5. Open "Triggers" tab and only select "Watched" checkmark
+6. Open "Data" tab and click "Watched" item to expand. Keep JSON Headers empty and paste the following into "JSON Data":
+```
+{
+  "event": "media.scrobble",
+  "server": "tautulli",
+  "Account": {
+    "title": "{username}"
+  },
+  "Metadata": {
+    <episode>
+    "grandparentTitle": "{show_name}",
+    "parentIndex": "{season_num}",
+    "index": "{episode_num}",      
+    </episode>
+    "title": "<episode>{episode_name}</episode><movie>{title}</movie>",
+    "type": "{media_type}",
+    "year": "{year}",
+    "Guid": [
+      {
+        "id": "imdb://{imdb_id}"
+      },
+      {
+        "id": "tvdb://{thetvdb_id}"
+      },
+      {
+        "id": "tmdb://{themoviedb_id}"
+      }
+    ]
+  }
+}
+```
+
+and click Save
+
+(Optional): If you have multiple users on the same plex server, open Conditions tab and add Username is [select your username]
+Go back to Tautulli Settings and click Restart
 
 ## 🤝🏻 Contributing
 
