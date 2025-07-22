@@ -207,23 +207,24 @@ Alternatively, you can find it by going to your [account settings](https://app.p
     "title": "{username}"
   },
   "Metadata": {
-    "title": "<episode>{show_name}</episode><movie>{title}</movie>",
-    "type": "{media_type}",
+    <episode>
+    "grandparentTitle": "{show_name}",
     "parentIndex": "{season_num}",
-    "index": "{episode_num}",
+    "index": "{episode_num}",      
+    </episode>
+    "title": "<episode>{episode_name}</episode><movie>{title}</movie>",
+    "type": "{media_type}",
     "year": "{year}",
     "Guid": [
       {
         "id": "imdb://{imdb_id}"
       },
       {
-        "id": "tmdb://{themoviedb_id}"
-      },
-      <episode>
-      {
         "id": "tvdb://{thetvdb_id}"
+      },
+      {
+        "id": "tmdb://{themoviedb_id}"
       }
-      </episode>
     ]
   }
 }
