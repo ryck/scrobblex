@@ -15,6 +15,8 @@ import { handle } from './utils.js';
 import { authorizeRequest } from './api.js';
 
 const app = express();
+// Trust proxy to allow express-rate-limit to use X-Forwarded-For header
+app.set('trust proxy', true);
 const PORT = process.env.PORT || 3090;
 
 const upload = multer({ storage: multer.memoryStorage() });
@@ -56,10 +58,10 @@ const getLocalIpAddress = () => {
 
 app.post('/plex', upload.single('thumb'), async (req, res) => {
   let payload;
-  
+
   // Check content type
   const contentType = req.get('content-type');
-  
+
   if (contentType && contentType.includes('application/json')) {
     // Handle JSON request
     payload = req.body;
@@ -77,6 +79,8 @@ app.post('/plex', upload.single('thumb'), async (req, res) => {
   const title = payload?.Metadata?.title;
   const name = payload?.Account?.title;
 
+  logger.debug(JSON.stringify(payload, null, 2));
+
   if (!event || !type || !title || !name) {
     logger.debug(`Event: ${event} Type: ${type} Title: ${title} Name: ${name}`);
     logger.error(`❌ ${chalk.red(`Missing required data.`)}`);
@@ -86,7 +90,7 @@ app.post('/plex', upload.single('thumb'), async (req, res) => {
   logger.debug(`🔥 Event: ${event} 🏷️ Type: ${type} 🔖 Title: ${title} 👤 ${name}`);
 
   if (process.env.PLEX_USER) {
-    if (!process.env.PLEX_USER.trim().toLowerCase().split(",").includes(name.trim().toLowerCase())) {
+    if (!process.env.PLEX_USER.trim().toLowerCase().split(',').includes(name.trim().toLowerCase())) {
       logger.error(`❌ ${chalk.red(`User ${name} is not in the list of allowed users: ${process.env.PLEX_USER}`)}`);
       return res.status(403).json({ error: 'User not allowed' });
     }
@@ -133,7 +137,9 @@ app.get('/authorize', authorizeLimiter, async (req, res) => {
       localStorage.setItem('tokens', data);
     } else {
       logger.error(`❌ ${chalk.red(`No tokens found!`)}`);
-      logger.info(`ℹ️ Have you authorized the application? Go to ${req.protocol}://${req.get('host')} to do it if needed.`);
+      logger.info(
+        `ℹ️ Have you authorized the application? Go to ${req.protocol}://${req.get('host')} to do it if needed.`,
+      );
       return res.status(401).json({ error: 'Authorization required' });
     }
 
@@ -159,7 +165,9 @@ app.listen(PORT, (error) => {
     const tokens = localStorage.getItem('tokens');
     if (!tokens || tokens == 'undefined') {
       logger.error(`❌ ${chalk.red(`Error getting token.`)}`);
-      logger.warn(`🛟 You need to authorize the app. Please go to http://${localIp}:${PORT} and follow the instructions.`);
+      logger.warn(
+        `🛟 You need to authorize the app. Please go to http://${localIp}:${PORT} and follow the instructions.`,
+      );
     }
   } else {
     logger.error(`❌ ${chalk.red(`Error occurred: ${error.message}`)}`);
