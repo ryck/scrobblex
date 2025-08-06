@@ -22,6 +22,8 @@ export const authorizeRequest = async ({ code, redirect_uri, refresh_token, gran
         grant_type,
     };
 
+    logger.debug(`🔑 Request body: ${JSON.stringify(body)}`);
+
     try {
         const response = await axios.post(`https://api.trakt.tv/oauth/token`, JSON.stringify(body), {
             headers: {
