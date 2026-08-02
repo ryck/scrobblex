@@ -38,6 +38,8 @@
 <details open="open">
 <summary>Table of Contents</summary>
 
+- [⚠️ Important Notice](#️-important-notice)
+  - [Alternatives](#alternatives)
 - [💡 About](#-about)
 - [🚀 Features](#-features)
 - [🐥 Getting Started](#-getting-started)
@@ -59,6 +61,23 @@
 </details>
 
 ---
+
+## ⚠️ Important Notice
+
+As of late July 2026, Trakt has moved API access behind a VIP subscription requirement.
+
+Because this project depends on Trakt API access to authenticate and submit scrobbles/ratings, Scrobblex is no longer broadly usable for non-VIP Trakt accounts.
+
+This repository is kept for archival/reference purposes, but the original value proposition no longer applies under the new Trakt policy.
+
+### Alternatives
+
+If you are looking for replacements, these are commonly suggested options:
+
+- [Scrob](https://scrob.app/)
+- [Yamtrack](https://yamtrack.app/)
+
+
 
 ## 💡 About
 
@@ -85,12 +104,12 @@ This is basically a command line app, so there are no screenshots really, BUT I 
 - Scrobble Plex plays to Trakt
 - Push Plex ratings to Trakt
 - Self-hosted
-- No Trakt VIP account required
+- Requires Trakt VIP (due to Trakt API policy changes)
 
 
 ## 🐥 Getting Started
 
-You don't need a Trakt VIP account to use this app (scrobblex will take care of that), BUT you need a Plex Pass subscription in order to have access to webhooks.
+You need a Trakt VIP account to use this app (due to Trakt API policy changes), and you need a Plex Pass subscription in order to have access to webhooks.
 
 If you don't have a Plex Pass is also possible to use Tautulli notifications instead (see FAQ)
 
